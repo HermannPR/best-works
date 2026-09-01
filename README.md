@@ -1,121 +1,74 @@
-# Best Works — HermannPR Portfolio
+# Best Works — Hermann
 
-Top 10 projects, ranked for a junior engineer CV. Each entry: what it is, stack, why it matters, verified links, screenshots.
+Index of the projects I'd point a hiring team to. Each one has a short "what it is", the stack, and — where it's deployed — a live link you can open right now.
 
----
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" height="20" alt="TypeScript"> <img src="https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB" height="20" alt="React"> <img src="https://img.shields.io/badge/Next.js-000000?style=flat-square&logo=nextdotjs&logoColor=white" height="20" alt="Next.js"> <img src="https://img.shields.io/badge/Node.js-5FA04E?style=flat-square&logo=nodedotjs&logoColor=white" height="20" alt="Node.js"> <img src="https://img.shields.io/badge/C%2B%2B-00599C?style=flat-square&logo=cplusplus&logoColor=white" height="20" alt="C++"> <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" height="20" alt="Python">
 
-## 1. folk-park 🎛️
-**Original wavetable synth + deterministic composition assistant** — Intel macOS / FL Studio
-- Stack: C++20, JUCE (Standalone/VST3), CMake, SQLite
-- Built over 10 milestones (m1–m9 + rhythm-lab), verified: 19/19 UI checks, 16/16 test suites, pluginval 5
-- **Why it matters:** deepest technical piece. Real-time audio, plugin architecture, disciplined milestones.
-- [GitHub](https://github.com/HermannPR/folk-park) (private)
+## 1. folk-park
+Original wavetable synthesizer + deterministic composition assistant. Standalone/VST3 for Intel macOS, written in C++20 with JUCE.
 
-<img src="folk-park/evidence/m8/visual/orbital-synth.png" width="640" alt="folk-park synth UI"/>
-<img src="folk-park/evidence/m8/visual/orbital-jarvis.png" width="640" alt="folk-park Jarvis assistant"/>
+Stack: C++20, JUCE, VST3, CMake, SQLite.
 
-## 2. Mildred Pierce 📺
-**Interactive channel-surfing web game** — chapters, tamagotchi, leaderboards, recording upload
-- Stack: Next.js 16, React 19, Three.js, Spline, Framer Motion, Vercel Postgres
-- 128 commits, 9 API routes, deployed.
-- **Why it matters:** full-stack creative product, shipped. Best single signal.
-- [GitHub](https://github.com/HermannPR/MildredPierce) · **Live:** [mildred-pierce.vercel.app](https://mildred-pierce.vercel.app)
+Why it matters: my most technical piece — real-time audio, plugin architecture, and a disciplined milestone process (verified at pluginval strictness 5).
 
-<img src="Mildred Pierce/docs/screenshot.png" width="640" alt="Mildred Pierce game"/>
+[GitHub](https://github.com/HermannPR/folk-park)
 
-## 3. LuminaReservations (WorkHub MTY) 🏢
-**Multi-role office space & parking reservation system** — employee/admin/guard, SSE realtime, AI recommendations
-- Stack: Node/Express/TS + React/Vite/TS, Supabase, Vitest, Gemini/OpenAI
-- ~13k LOC, 32 test files, migrations, CI.
-- **Why it matters:** production-style team project with tests and CI — recruiter gold.
-- [GitHub](https://github.com/HermannPR/LuminaReservations) (private) · **Live:** [lumina-front-oxfi.vercel.app](https://lumina-front-oxfi.vercel.app)
+## 2. Mildred Pierce
+Channel-surfing web game: a platformer with CRT presentation, a tamagotchi companion, leaderboards and recording uploads. Next.js + Three.js.
 
-<img src="LuminaReservations-remote/docs/login.png" width="640" alt="WorkHub login"/>
-<img src="LuminaReservations-remote/docs/presentation/page-04.png" width="640" alt="WorkHub reservation mockup"/>
-<img src="LuminaReservations-remote/docs/presentation/page-09.png" width="640" alt="WorkHub component diagram"/>
+Stack: Next.js, React, Three.js, Tailwind, PostgreSQL (Vercel), Framer Motion.
 
-## 4. 2HLABS 💪
-**Preworkout brand site** — "training souls" quiz, custom formula generator, i18n, PWA
-- Stack: React 19, Vite, TS, Tailwind, Three.js, framer-motion
-- 175 commits, 15 pages, 55 components, hybrid recommendation engine.
-- **Why it matters:** client-style polish, long-lived real product.
-- [GitHub](https://github.com/HermannPR/2HLABS) · **Live:** [2-hlabs.vercel.app](https://2-hlabs.vercel.app)
+Why it matters: a full-stack creative product that's actually shipped, with real API routes.
 
-<img src="2HLABS/preworkout-startup/docs/screenshot.png" width="640" alt="2HLABS site"/>
+[GitHub](https://github.com/HermannPR/MildredPierce) · [live demo](https://mildred-pierce.vercel.app)
 
-## 5. laptop-deal-intelligence 💻
-**Deal-intelligence dashboard for laptop offers in Mexico** — scraped price facts, BUY/NO scoring
-- Stack: Next.js 16, Python collector, Supabase, pytest/Vitest/Playwright, GH Actions
-- Evidence-first analytics, 4 source adapters, documented formulas, CI.
-- **Why it matters:** data engineering + product thinking, clean security posture.
-- [GitHub](https://github.com/HermannPR/laptop-deal-intelligence) (private) · **Live:** [laptop-deal-intelligence.vercel.app](https://laptop-deal-intelligence.vercel.app)
+## 3. Lumina Reservations (WorkHub MTY)
+Multi-role office space & parking reservations: employee, admin and guard views, real-time updates over SSE, plus AI recommendations.
 
-<img src="laptop-deal-intelligence/docs/screenshot.png" width="640" alt="laptop-deal dashboard"/>
+Stack: TypeScript, React/Vite, Node/Express, Supabase/PostgreSQL, Gemini/OpenAI, Vitest.
 
-## 6. JugueteriaElArbolito 🧸
-**Production e-commerce for a real toy store** (est. 1975) — web + admin + POS inventory sync
-- Stack: Next.js 14, Supabase, Mercado Pago, Skydropx, Groq/Gemini chatbot, Python Firebird sync
-- 18 numbered docs, business rules enforced (approval flow, stock hiding).
-- **Why it matters:** real business integration — payments, POS, inventory sync. Not a toy project.
-- [GitHub](https://github.com/HermannPR/JugueteriaElArbolito) (private) · **Live:** [jugueteria-el-arbolito.vercel.app](https://jugueteria-el-arbolito.vercel.app)
+Why it matters: a production-style team project with tests and CI — the closest thing to real work in the list.
 
-<img src="JugueteriaElArbolito/docs/live-storefront.png" width="640" alt="El Arbolito live storefront with products"/>
-<img src="JugueteriaElArbolito/docs/live-admin.png" width="640" alt="El Arbolito admin"/>
+[GitHub](https://github.com/HermannPR/LuminaReservations) · [live demo](https://lumina-front-oxfi.vercel.app)
 
-## 7. Forge (PERSONAL HELPER) 🧰
-**"Forge personal OS"** — personal dashboard with 11 modules, XP system, AI chat
-- Stack: Next.js 16, TS, Tailwind 4, shadcn, Supabase, AI SDK/Groq, Dexie, PWA
-- Habits, finance, gym, nutrition, mood, sleep, medicine, deutsch, relationships, focus.
-- **Why it matters:** modern stack, initiative, self-driven product.
-- [GitHub](https://github.com/HermannPR/forge) · **Live:** [forge-gold-iota.vercel.app](https://forge-gold-iota.vercel.app)
+## 4. 2HLABS
+Preworkout brand site. A "training souls" assessment maps you to one of twelve archetypes and generates a tailored formula, ingredient by ingredient.
 
-<img src="PERSONAL HELPER/forge/docs/screenshot.png" width="640" alt="Forge login"/>
+Stack: React, Vite, TypeScript, Tailwind, PWA, bilingual.
 
-## 8. PosturePRO 🧍
-**Privacy-first posture analysis** — all ML in-browser
-- Stack: Next.js 14, TensorFlow.js, MediaPipe Pose, Tailwind
-- 6 issue detectors, 0–100 score, exercises, camera flow. Zero data leaves the browser.
-- **Why it matters:** distinctive, demoable browser-ML project.
-- [GitHub](https://github.com/HermannPR/PosturePRO) · **Live:** [posture-pro.vercel.app](https://posture-pro.vercel.app)
+Why it matters: design-driven frontend with an interactive product, deployed.
 
-<img src="PosturePRO/docs/landing.png" width="640" alt="PosturePRO landing"/>
-<img src="PosturePRO/docs/analysis.png" width="640" alt="PosturePRO analysis"/>
+[GitHub](https://github.com/HermannPR/2HLABS) · [live demo](https://2-hlabs.vercel.app)
 
-## 9. JesusGPT ✝️
-**"Red Letter Reflection"** — AI Bible-study chat with RAG, verse references, conversation memory
-- Stack: Vercel serverless, Express, Gemini + Groq, Vite/React/Tailwind
-- Deployed. Clickable verse refs, gospel extraction, multi-language.
-- **Why it matters:** AI integration proven in production, deployed.
-- [GitHub](https://github.com/HermannPR/JesusGPT) · **Live:** [jesus-gpt.vercel.app](https://jesus-gpt.vercel.app)
+## 5. laptop-deal-intelligence
+Dashboard that collects and scores laptop offers in Mexico across stores, preserving observed prices over time.
 
-<img src="JesusGPT/docs/screenshot-conversation.png" width="640" alt="JesusGPT real conversation"/>
+Stack: Next.js, TypeScript, Python, Supabase.
 
-## 10. GateGenius (HACKMTY 2025) ✈️
-**AI airline catering platform** — expiration intelligence, provisioning, workforce planning
-- Stack: React 19, Vite, Express 5, MySQL, JWT, xlsx/jspdf
-- Hackathon build, 33 commits, technical docs.
-- **Why it matters:** speed + impact story for interviews.
-- [GitHub](https://github.com/HermannPR/gategenius) (private) · **Live:** [gategenius.vercel.app](https://gategenius.vercel.app)
+Why it matters: an evidence-first data product — scraping, a filtered dashboard, and price history.
 
-<img src="HACKMTY/HackMTY2025/docs/screenshot.png" width="640" alt="GateGenius"/>
+[GitHub](https://github.com/HermannPR/laptop-deal-intelligence) · [live demo](https://laptop-deal-intelligence.vercel.app)
 
----
+## 6. Juguetería El Arbolito
+Production e-commerce for a real toy store, with admin and point-of-sale synced to Mercado Pago.
 
-## Honorable Mentions
+Stack: Next.js, TypeScript, Supabase, Mercado Pago.
 
-| Project | One-liner | Link |
-|---|---|---|
-| warehousemodel | Warehouse-robot RL simulation, 14 tests, Unity bridge | [repo](https://github.com/HermannPR/warehouse-model) |
-| SpectreDAW | 3DS homebrew step-sequencer synth in C | [repo](https://github.com/HermannPR/spectre-daw) |
-| clipboard-ai | Windows hotkey AI tool, tests + Inno installer | [repo](https://github.com/HermannPR/clipboard-ai) |
-| serum2-neurosync | Serum preset generator (.fxp) via Groq | [repo](https://github.com/HermannPR/serum2-neurosync) |
-| claude-phone | Mobile web client for Claude Code over PTY/QR pairing | [repo](https://github.com/HermannPR/claudephone) |
-| Smiterinov2 | Smite-timing trainer, pygame + 14k LOC three.js port | [repo](https://github.com/HermannPR/smiterino-2) |
-| DATATHON | Commission-optimization app with trained ML models | [repo](https://github.com/HermannPR/Datathon-build) |
-| magicshell | Clipboard-assist: double Ctrl+C → LLM → paste | [repo](https://github.com/HermannPR/magicshell) |
-| InnvoiceFlow | German invoice platform, Phase 0: ADRs, threat model | [repo](https://github.com/HermannPR/innvoiceflow) |
-| DUNGEONCRAWLER | Complete Three.js learning dungeon-crawler | [repo](https://github.com/HermannPR/DUNGEONCRAWLER) |
+Why it matters: real business integration — live storefront, inventory and checkout that a store actually runs on.
 
----
+[GitHub](https://github.com/HermannPR/JugueteriaElArbolito) · [live demo](https://jugueteria-el-arbolito.vercel.app)
 
-*Links verified via GitHub API 2026-08-25. Full inventory: [PROJECTS.md](PROJECTS.md).*
+## Also
+
+- **forge** — a "personal OS" dashboard (habits, finance, gym, mood, German vocab) with an AI assistant. [GitHub](https://github.com/HermannPR/forge)
+- **JesusGPT** — AI Bible-study chat grounded in the Gospels. [GitHub](https://github.com/HermannPR/JesusGPT) · [live](https://jesus-gpt.vercel.app)
+- **warehouse-model** — multi-robot warehouse RL simulation with Q-learning. [GitHub](https://github.com/HermannPR/warehouse-model)
+- **spectre-daw** — Nintendo 3DS homebrew synthesizer + piano roll in C. [GitHub](https://github.com/HermannPR/spectre-daw)
+- **PosturePRO** — in-browser posture analysis with MediaPipe/TensorFlow. [GitHub](https://github.com/HermannPR/PosturePRO)
+- **GateGenius** — AI airline-catering platform, HackMTY 2025. [GitHub](https://github.com/HermannPR/GateGenius)
+
+## Open to
+
+Junior / entry-level software engineering roles, internships and remote work. Full-stack TypeScript (React/Next.js) is my bread and butter; I'll happily go deep on audio, DSP, or C/C++.
+
+[GitHub profile](https://github.com/HermannPR) · [Best works](https://github.com/HermannPR/best-works)
