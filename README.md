@@ -14,7 +14,7 @@ Why it matters: my most technical piece — real-time audio, plugin architecture
 [GitHub](https://github.com/HermannPR/folk-park)
 
 ## 2. Mildred Pierce
-Channel-surfing web game: a platformer with CRT presentation, a tamagotchi companion, leaderboards and recording uploads. Next.js + Three.js.
+Transmedia website for the band Mildred Pierce: a channel-surfing interactive experience with CRT presentation, a companion, leaderboards and recording uploads. Next.js + Three.js.
 
 Stack: Next.js, React, Three.js, Tailwind, PostgreSQL (Vercel), Framer Motion.
 
