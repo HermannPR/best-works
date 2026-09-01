@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hermann — Best Works</title>
+  <style>
+    :root {
+      --bg: #0a0b0d;
+      --panel: #121418;
+      --panel2: #171a20;
+      --line: #23262d;
+      --text: #e8eaee;
+      --muted: #9aa1ab;
+      --dim: #6b7280;
+      --accent: #55e6c1;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.55;
+    }
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    /* Hero */
+    header.hero {
+      padding: 72px 0 40px;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .sub {
+      font-size: clamp(1rem, 2.4vw, 1.25rem);
+      color: var(--muted);
+      max-width: 640px;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .chip {
+      font-size: 12.5px;
+      padding: 5px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--panel);
+      white-space: nowrap;
+    }
+
+    /* Section */
+    section { padding: 48px 0 8px; }
+    .sec-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--dim);
+      margin: 0 0 20px;
+      font-weight: 600;
+    }
+
+    /* Grid */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 20px; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+    .card:hover { transform: translateY(-4px); border-color: #31353f; box-shadow: 0 18px 40px rgba(0,0,0,.35); }
+    .poster { height: 168px; position: relative; display: flex; align-items: flex-end; padding: 16px; }
+    .poster svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .poster .mono {
+      position: relative;
+      z-index: 1;
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: rgba(255,255,255,.92);
+      text-shadow: 0 2px 14px rgba(0,0,0,.45);
+    }
+    .badge {
+      position: absolute; top: 12px; right: 12px; z-index: 1;
+      font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+      padding: 4px 9px; border-radius: 999px; font-weight: 600;
+      background: rgba(0,0,0,.55); color: #fff; backdrop-filter: blur(4px);
+    }
+    .cardbody { padding: 18px 18px 20px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+    .cardtitle { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .cardtitle h3 { margin: 0; font-size: 1.12rem; font-weight: 700; }
+    .cat { font-size: 12px; color: var(--dim); white-space: nowrap; }
+    .blurb { color: var(--muted); font-size: .94rem; margin: 0; }
+    .hard { color: var(--text); font-size: .9rem; margin: 0; }
+    .hard b { color: var(--accent); font-weight: 600; }
+    .stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+    .stack span {
+      font-size: 11px; padding: 3px 8px; border-radius: 6px;
+      background: var(--panel2); border: 1px solid var(--line); color: var(--muted);
+    }
+    .links { display: flex; gap: 14px; margin-top: 4px; font-size: .85rem; }
+    .links a { color: var(--accent); font-weight: 600; }
+    .links a:hover { text-decoration: underline; }
+
+    footer { padding: 60px 0 80px; color: var(--dim); font-size: .85rem; text-align: center; }
+    .note {
+      margin: 28px 0 0; color: var(--dim); font-size: .82rem;
+      padding: 14px 16px; border: 1px dashed var(--line); border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="eyebrow">Software · Full-Stack · Audio</div>
+      <h1>Hermann</h1>
+      <p class="sub">I build full-stack TypeScript products and creative audio tools. These are the projects I'd point a hiring team to — what they do, the hard part, and where to try them.</p>
+      <div class="chips">
+        <span class="chip">TypeScript</span><span class="chip">React / Next.js</span>
+        <span class="chip">Node.js</span><span class="chip">Python</span>
+        <span class="chip">C++ / JUCE</span><span class="chip">Three.js</span>
+        <span class="chip">Audio &amp; DSP</span><span class="chip">PostgreSQL</span>
+      </div>
+    </header>
+
+    <section>
+      <h2 class="sec-title">Featured</h2>
+      <div class="grid">
+
+        <!-- Mildred Pierce -->
+        <article class="card">
+          <div class="poster">
+            <svg viewBox="0 0 300 168" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#1a1226"/><stop offset="1" stop-color="#402a63"/></linearGradient></defs>
+              <rect width="300" height="168" fill="url(#g1)"/>
+              <g stroke="rgba(255,255,255,.12)" stroke-width="1"><line x1="0" y1="40" x2="300" y2="40"/><line x1="0" y1="80" x2="300" y2="80"/><line x1="0" y1="120" x2="300" y2="120"/></g>
+              <circle cx="210" cy="70" r="26" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
+            </svg>
+            <span class="mono">MP</span><span class="badge">Live</span>
+          </div>
+          <div class="cardbody">
+            <div class="cardtitle"><h3>Mildred Pierce</h3><span class="cat">Web game</span></div>
+            <p class="blurb">Channel-surfing platformer that feels like a nostalgic TV — CRT shaders, a tamagotchi companion, leaderboards, and player recording uploads.</p>
+            <p class="hard"><b>Hard part:</b> a shipped, networked product, not a demo. Real API routes for scores, auth, OG images and uploads, backed by Postgres, on top of heavy Three.js FX.</p>
+            <div class="stack"><span>Next.js</span><span>Three.js</span><span>Postgres</span><span>Framer Motion</span></div>
+            <div class="links"><a href="https://github.com/HermannPR/MildredPierce" target="_blank" rel="noopener">GitHub ↗</a><a href="https://mildred-pierce.vercel.app" target="_blank" rel="noopener">Live ↗</a></div>
+          </div>
+        </article>
+
+        <!-- Forge -->
+        <article class="card">
+          <div class="poster">
+            <svg viewBox="0 0 300 168" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#061018"/><stop offset="1" stop-color="#0d3040"/></linearGradient></defs>
+              <rect width="300" height="168" fill="url(#g2)"/>
+              <g fill="rgba(255,255,255,.14)"><rect x="36" y="34" width="34" height="34" rx="7"/><rect x="82" y="34" width="34" height="34" rx="7"/><rect x="128" y="34" width="34" height="34" rx="7"/><rect x="174" y="34" width="34" height="34" rx="7"/><rect x="36" y="82" width="34" height="34" rx="7"/><rect x="82" y="82" width="34" height="34" rx="7"/><rect x="128" y="82" width="34" height="34" rx="7"/><rect x="174" y="82" width="34" height="34" rx="7"/></g>
+            </svg>
+            <span class="mono">FG</span>
+          </div>
+          <div class="cardbody">
+            <div class="cardtitle"><h3>Forge</h3><span class="cat">Personal OS</span></div>
+            <p class="blurb">A personal-life dashboard with 11 modules — habits, finance, gym, mood, sleep, German vocab — plus a gamified XP system and an AI assistant that reads your live stats.</p>
+            <p class="hard"><b>Hard part:</b> the Forge AI has real-time context — it streams from Groq while querying Supabase RPC for your XP, sleep and mood, so the assistant actually knows your day.</p>
+            <div class="stack"><span>Next.js</span><span>Supabase</span><span>AI SDK</span><span>TypeScript</span></div>
+            <div class="links"><a href="https://github.com/HermannPR/forge" target="_blank" rel="noopener">GitHub ↗</a></div>
+          </div>
+        </article>
+
+        <!-- folk-park -->
+        <article class="card">
+          <div class="poster">
+            <svg viewBox="0 0 300 168" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#160f0a"/><stop offset="1" stop-color="#3a2416"/></linearGradient></defs>
+              <rect width="300" height="168" fill="url(#g3)"/>
+              <g stroke="rgba(255,255,255,.16)" stroke-width="1.4" fill="none">
+                <path d="M40,120 Q90,40 140,92 Q190,144 260,70"/><path d="M40,120 Q90,40 140,92 Q190,144 260,70" stroke="rgba(255,255,255,.08)"/>
+              </g>
+            </svg>
+            <span class="mono">fp</span><span class="badge">Private</span>
+          </div>
+          <div class="cardbody">
+            <div class="cardtitle"><h3>folk-park</h3><span class="cat">Audio / C++</span></div>
+            <p class="blurb">An original wavetable synthesizer + deterministic composition assistant. Standalone and VST3 for macOS, written in C++20 with JUCE.</p>
+            <p class="hard"><b>Hard part:</b> real-time audio under a hard budget — plugin architecture, DSP and a disciplined milestone process, verified at pluginval strictness 5.</p>
+            <div class="stack"><span>C++20</span><span>JUCE</span><span>VST3</span><span>CMake</span></div>
+            <div class="links"><a href="https://github.com/HermannPR/folk-park" target="_blank" rel="noopener">GitHub ↗</a></div>
+          </div>
+        </article>
+
+        <!-- warehouse-model -->
+        <article class="card">
+          <div class="poster">
+            <svg viewBox="0 0 300 168" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="g4" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#0a120a"/><stop offset="1" stop-color="#1e3d1e"/></linearGradient></defs>
+              <rect width="300" height="168" fill="url(#g4)"/>
+              <g fill="rgba(255,255,255,.14)"><rect x="40" y="60" width="40" height="14" rx="3"/><rect x="100" y="60" width="40" height="14" rx="3"/><rect x="160" y="60" width="40" height="14" rx="3"/><rect x="220" y="60" width="40" height="14" rx="3"/></g>
+              <circle cx="70" cy="120" r="7" fill="#55e6c1"/><circle cx="180" cy="118" r="7" fill="none" stroke="#55e6c1" stroke-width="2"/>
+            </svg>
+            <span class="mono">WH</span>
+          </div>
+          <div class="cardbody">
+            <div class="cardtitle"><h3>Warehouse RL</h3><span class="cat">ML / Simulation</span></div>
+            <p class="blurb">Multi-robot warehouse simulation: Q-learning with linear function approximation so a fleet learns pick-up and delivery without deadlocking.</p>
+            <p class="hard"><b>Hard part:</b> the conflict resolver — many-to-one merges, occupant-stays and head-on swaps — plus stuck detection so a boxed-in robot frees itself instead of training forever.</p>
+            <div class="stack"><span>Python</span><span>RL</span><span>FastAPI</span><span>Matplotlib</span></div>
+            <div class="links"><a href="https://github.com/HermannPR/warehouse-model" target="_blank" rel="noopener">GitHub ↗</a></div>
+          </div>
+        </article>
+
+        <!-- 2HLABS -->
+        <article class="card">
+          <div class="poster">
+            <svg viewBox="0 0 300 168" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="g5" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#071018"/><stop offset="1" stop-color="#0e2f4b"/></linearGradient></defs>
+              <rect width="300" height="168" fill="url(#g5)"/>
+              <circle cx="150" cy="84" r="42" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="2"/>
+              <circle cx="150" cy="84" r="28" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="2"/>
+            </svg>
+            <span class="mono">2H</span>
+          </div>
+          <div class="cardbody">
+            <div class="cardtitle"><h3>2HLABS</h3><span class="cat">Brand / Product</span></div>
+            <p class="blurb">Preworkout brand site with a "training souls" assessment that maps athletes to one of twelve archetypes and generates a tailored formula.</p>
+            <p class="hard"><b>Hard part:</b> a deterministic decision tree for soul-matching plus a body-weight-aware formula generator that re-checks every ingredient against clinical dose ranges as you drag the sliders. Fully bilingual EN/ES.</p>
+            <div class="stack"><span>React</span><span>Vite</span><span>Tailwind</span><span>PWA</span></div>
+            <div class="links"><a href="https://github.com/HermannPR/2HLABS" target="_blank" rel="noopener">GitHub ↗</a></div>
+          </div>
+        </article>
+
+        <!-- spectre-daw -->
+        <article class="card">
+          <div class="poster">
+            <svg viewBox="0 0 300 168" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="g6" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#120c1a"/><stop offset="1" stop-color="#2a1b4a"/></linearGradient></defs>
+              <rect width="300" height="168" fill="url(#g6)"/>
+              <g fill="rgba(255,255,255,.25)"><rect x="60" y="90" width="10" height="30"/><rect x="82" y="70" width="10" height="50"/><rect x="104" y="94" width="10" height="26"/><rect x="126" y="60" width="10" height="60"/><rect x="148" y="84" width="10" height="36"/><rect x="170" y="72" width="10" height="48"/><rect x="192" y="90" width="10" height="30"/></g>
+            </svg>
+            <span class="mono">SD</span>
+          </div>
+          <div class="cardbody">
+            <div class="cardtitle"><h3>SpectreDAW</h3><span class="cat">C / 3DS</span></div>
+            <p class="blurb">A step-sequencer synthesizer running on the Nintendo 3DS — real-time subtractive synthesis, a 3-track drum machine and a 3-note chord piano roll.</p>
+            <p class="hard"><b>Hard part:</b> no audio stack to lean on — you bring your own real-time loop and keep it stable while a sequencer ticks, on a fixed handheld target. Builds with devkitPro.</p>
+            <div class="stack"><span>C</span><span>libctru</span><span>devkitARM</span></div>
+            <div class="links"><a href="https://github.com/HermannPR/spectre-daw" target="_blank" rel="noopener">GitHub ↗</a></div>
+          </div>
+        </article>
+
+        <!-- PosturePRO -->
+        <article class="card">
+          <div class="poster">
+            <svg viewBox="0 0 300 168" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="g7" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#0a0f0f"/><stop offset="1" stop-color="#123a33"/></linearGradient></defs>
+              <rect width="300" height="168" fill="url(#g7)"/>
+              <g stroke="rgba(255,255,255,.28)" stroke-width="2" fill="none"><circle cx="150" cy="60" r="16"/><path d="M150,76 L150,120 M150,92 L126,112 M150,92 L174,112 M150,120 L136,150 M150,120 L164,150"/></g>
+            </svg>
+            <span class="mono">PP</span>
+          </div>
+          <div class="cardbody">
+            <div class="cardtitle"><h3>PosturePRO</h3><span class="cat">ML / Browser</span></div>
+            <p class="blurb">Privacy-first posture analysis: the camera feed and the ML never leave the device. Real-time pose estimation that flags forward head, rounded shoulders, pelvic tilt and more.</p>
+            <p class="hard"><b>Hard part:</b> running MediaPipe + TensorFlow.js in-browser at a smooth frame budget, then turning raw landmarks into interpretable posture issues and actionable cues.</p>
+            <div class="stack"><span>Next.js</span><span>TensorFlow.js</span><span>MediaPipe</span></div>
+            <div class="links"><a href="https://github.com/HermannPR/PosturePRO" target="_blank" rel="noopener">GitHub ↗</a></div>
+          </div>
+        </article>
+
+        <!-- JesusGPT -->
+        <article class="card">
+          <div class="poster">
+            <svg viewBox="0 0 300 168" preserveAspectRatio="none" aria-hidden="true">
+              <defs><linearGradient id="g8" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#0d0a12"/><stop offset="1" stop-color="#241c3d"/></linearGradient></defs>
+              <rect width="300" height="168" fill="url(#g8)"/>
+              <g fill="rgba(255,255,255,.14)"><circle cx="150" cy="84" r="30"/><circle cx="150" cy="84" r="6" fill="rgba(255,255,255,.4)"/></g>
+            </svg>
+            <span class="mono">JG</span>
+          </div>
+          <div class="cardbody">
+            <div class="cardtitle"><h3>JesusGPT</h3><span class="cat">LLM / RAG</span></div>
+            <p class="blurb">An AI Bible-study chat that answers in the first person, grounded only in the Gospels, across English, Spanish, Latin and Greek.</p>
+            <p class="hard"><b>Hard part:</b> retrieval grounding — keyword/theme matching over the Gospel dataset so answers cite the source verses instead of hallucinating, in four languages.</p>
+            <div class="stack"><span>React</span><span>Vite</span><span>Gemini</span><span>RAG</span></div>
+            <div class="links"><a href="https://github.com/HermannPR/JesusGPT" target="_blank" rel="noopener">GitHub ↗</a></div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section>
+      <h2 class="sec-title">More</h2>
+      <div class="grid">
+        <article class="card">
+          <div class="poster">
+            <svg viewBox="0 0 300 168" preserveAspectRatio="none" aria-hidden="true"><rect width="300" height="168" fill="#12141a"/><text x="40" y="100" font-size="34" fill="rgba(255,255,255,.5)" font-family="monospace">esearch-rag</text></svg>
+          </div>
+          <div class="cardbody"><div class="cardtitle"><h3>esearch-rag</h3><span class="cat">LLM</span></div><p class="blurb">Minimal RAG chat with academic citations, built around retrieval that can point to sources.</p><div class="stack"><span>RAG</span><span>LLM</span></div><div class="links"><a href="https://github.com/HermannPR/esearch-rag" target="_blank" rel="noopener">GitHub ↗</a></div></div>
+        </article>
+        <article class="card">
+          <div class="poster">
+            <svg viewBox="0 0 300 168" preserveAspectRatio="none" aria-hidden="true"><rect width="300" height="168" fill="#12141a"/><text x="40" y="100" font-size="30" fill="rgba(255,255,255,.5)" font-family="monospace">nfa-dfa</text></svg>
+          </div>
+          <div class="cardbody"><div class="cardtitle"><h3>nfa-dfa-converter</h3><span class="cat">Theory</span></div><p class="blurb">Regex → NFA → DFA automaton converter with a GUI — a sharp little tool for formal-language work.</p><div class="stack"><span>Automata</span><span>GUI</span></div><div class="links"><a href="https://github.com/HermannPR/nfa-dfa-converter" target="_blank" rel="noopener">GitHub ↗</a></div></div>
+        </article>
+        <article class="card">
+          <div class="poster">
+            <svg viewBox="0 0 300 168" preserveAspectRatio="none" aria-hidden="true"><rect width="300" height="168" fill="#12141a"/><text x="40" y="100" font-size="30" fill="rgba(255,255,255,.5)" font-family="monospace">metascout</text></svg>
+          </div>
+          <div class="cardbody"><div class="cardtitle"><h3>metascout</h3><span class="cat">Product</span></div><p class="blurb">A research/scouting tool — see the repo for the details and stack.</p><div class="stack"><span>TS</span></div><div class="links"><a href="https://github.com/HermannPR/metascout" target="_blank" rel="noopener">GitHub ↗</a></div></div>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      <p>Hermann · full-stack TypeScript, creative audio and ML in the browser.</p>
+      <p class="note">Some of the strongest work — folk-park, Lumina, and the hackathon projects — is currently in private repos. If it's part of your evaluation, I'm happy to open them up or walk through them live.</p>
+    </footer>
+  </div>
+</body>
+</html>
