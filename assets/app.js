@@ -431,6 +431,172 @@
     draw();
   };
 
+  // 1c. folk-park (v2 — minimal, fast to grasp) — keyboard + one play button.
+  demos.synth = function (body, accent) {
+    const WAVES = ["sawtooth", "sine", "square"];
+    const WHITE = ["C4", "D4", "E4", "F4", "G4", "A4", "B4"];
+    const BLACK_POS = { "C#4": 1, "D#4": 2, "F#4": 4, "G#4": 5, "A#4": 6 };
+    const melodies = window.MOCK.synthMelodies || [];
+    const KW = 100 / WHITE.length;
+    let tuneIndex = 0;
+
+    body.innerHTML = `
+      <div class="synth premium-demo v2" style="--accent:${accent}">
+        <canvas class="scope" width="440" height="96"></canvas>
+        <div class="keys"></div>
+        <div class="row">
+          <div class="waves" role="group" aria-label="Waveform">
+            ${WAVES.map((w, i) => `<button class="pbtn chip ${i === 0 ? "active" : ""}" data-wave="${w}">${w[0].toUpperCase() + w.slice(1)}</button>`).join("")}
+          </div>
+          <button class="pbtn primary" data-tune>▶ Play a tune</button>
+        </div>
+        <div class="readout">Tap the keys or hit play.</div>
+      </div>`;
+
+    const keysWrap = body.querySelector(".keys");
+    keysWrap.innerHTML =
+      WHITE.map((n, i) => `<span class="key white" data-n="${n}" style="left:${i * KW}%;width:${KW}%"></span>`).join("") +
+      Object.entries(BLACK_POS).map(([n, before]) => `<span class="key black" data-n="${n}" style="left:${before * KW - KW * 0.285}%;width:${KW * 0.55}%"></span>`).join("");
+
+    const scope = body.querySelector(".scope");
+    const sctx = scope.getContext("2d");
+    const readout = body.querySelector(".readout");
+    let wave = "sawtooth";
+    let audio, analyser, bus, freqData;
+    let heldNote = null, heldVoices = [];
+
+    function ensureAudio() {
+      if (!audio) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audio = new AC();
+        analyser = audio.createAnalyser();
+        analyser.fftSize = 1024;
+        bus = audio.createGain();
+        bus.gain.value = 0.0;
+        bus.connect(analyser).connect(audio.destination);
+        freqData = new Uint8Array(analyser.frequencyBinCount);
+      }
+      if (audio.state === "suspended") audio.resume();
+    }
+
+    function startNote(freq, dur, sustain) {
+      ensureAudio();
+      const now = audio.currentTime;
+      const g = audio.createGain();
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.22, now + 0.02);
+      if (sustain) g.gain.linearRampToValueAtTime(0.22, now + dur);
+      else g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      g.connect(bus);
+      const o = audio.createOscillator();
+      o.type = wave;
+      o.frequency.value = freq;
+      o.connect(g);
+      o.start(now);
+      o.stop(now + dur + 0.05);
+      return { g };
+    }
+    function releaseVoices() {
+      if (!audio) return;
+      const now = audio.currentTime;
+      heldVoices.forEach((v) => {
+        try {
+          v.g.gain.cancelScheduledValues(now);
+          v.g.gain.setValueAtTime(0.0001, now);
+          v.g.gain.linearRampToValueAtTime(0.0001, now + 0.12);
+        } catch (e) {}
+      });
+      heldVoices = [];
+    }
+    function lightKey(n, on) {
+      const el = keysWrap.querySelector('[data-n="' + n + '"]');
+      if (el) el.classList.toggle("on", on);
+    }
+
+    body.querySelectorAll(".chip").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        ripple(btn, e);
+        wave = btn.getAttribute("data-wave");
+        body.querySelectorAll(".chip").forEach((x) => x.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+
+    keysWrap.addEventListener("pointerdown", (e) => {
+      const el = e.target.closest(".key");
+      if (!el) return;
+      e.preventDefault();
+      ensureAudio();
+      heldNote = el.getAttribute("data-n");
+      heldVoices.push(startNote(noteToFreq(heldNote), 1, true));
+      lightKey(heldNote, true);
+      readout.textContent = heldNote + " · " + noteToFreq(heldNote).toFixed(1) + " Hz";
+    });
+    keysWrap.addEventListener("pointermove", (e) => {
+      if (e.buttons === 0) return;
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      if (el && el.classList && el.classList.contains("key") && el.getAttribute("data-n") !== heldNote) {
+        releaseVoices();
+        lightKey(heldNote, false);
+        heldNote = el.getAttribute("data-n");
+        heldVoices.push(startNote(noteToFreq(heldNote), 1, true));
+        lightKey(heldNote, true);
+        readout.textContent = heldNote + " · " + noteToFreq(heldNote).toFixed(1) + " Hz";
+      }
+    });
+    window.addEventListener("pointerup", () => {
+      releaseVoices();
+      if (heldNote) lightKey(heldNote, false);
+      heldNote = null;
+    });
+
+    function playSeq(notes, tempo, name) {
+      ensureAudio();
+      const beat = 60 / tempo;
+      let t = 0;
+      notes.forEach(([n, beats]) => {
+        const dur = beats * beat * 0.92;
+        startNote(noteToFreq(n), dur, false);
+        setTimeout(() => lightKey(n, true), t * 1000);
+        setTimeout(() => lightKey(n, false), (t + dur) * 1000);
+        t += beats * beat;
+      });
+      readout.textContent = name;
+    }
+    body.querySelector("[data-tune]").addEventListener("click", (e) => {
+      ripple(e.currentTarget, e);
+      const m = melodies[tuneIndex % melodies.length];
+      tuneIndex++;
+      playSeq(m.notes, m.tempo, m.name);
+    });
+
+    function draw() {
+      requestAnimationFrame(draw);
+      sctx.clearRect(0, 0, scope.width, scope.height);
+      sctx.strokeStyle = "rgba(20,22,30,0.08)";
+      sctx.lineWidth = 1;
+      for (let yy = 0; yy < scope.height; yy += 16) {
+        sctx.beginPath(); sctx.moveTo(0, yy); sctx.lineTo(scope.width, yy); sctx.stroke();
+      }
+      let buf = null;
+      if (audio && analyser) {
+        buf = new Uint8Array(analyser.fftSize);
+        analyser.getByteTimeDomainData(buf);
+      }
+      sctx.strokeStyle = accent;
+      sctx.lineWidth = 2;
+      sctx.beginPath();
+      const n = buf ? buf.length : scope.width;
+      for (let i = 0; i < n; i++) {
+        const x = (i / n) * scope.width;
+        const y = buf ? (buf[i] / 255) * scope.height : scope.height / 2;
+        i === 0 ? sctx.moveTo(x, y) : sctx.lineTo(x, y);
+      }
+      sctx.stroke();
+    }
+    draw();
+  };
+
   // 2. Mildred Pierce — channel surfer with animated scenes.
   demos.channels = function (body) {
     body.innerHTML = `
