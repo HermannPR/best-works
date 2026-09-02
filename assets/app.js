@@ -573,7 +573,7 @@
     function draw() {
       requestAnimationFrame(draw);
       sctx.clearRect(0, 0, scope.width, scope.height);
-      sctx.strokeStyle = "rgba(20,22,30,0.08)";
+      sctx.strokeStyle = "rgba(255,255,255,0.06)";
       sctx.lineWidth = 1;
       for (let yy = 0; yy < scope.height; yy += 16) {
         sctx.beginPath(); sctx.moveTo(0, yy); sctx.lineTo(scope.width, yy); sctx.stroke();
