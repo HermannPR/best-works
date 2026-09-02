@@ -794,6 +794,169 @@
     draw();
   };
 
+  // 1e. folk-park (v4 — clean horizontal piano + oscilloscope screen).
+  demos.synth = function (body, accent) {
+    const WAVES = ["sawtooth", "sine", "square"];
+    const WHITE = ["C4", "D4", "E4", "F4", "G4", "A4", "B4"];
+    const BLACKS = [["C#4", 0], ["D#4", 1], ["F#4", 3], ["G#4", 4], ["A#4", 5]];
+    const melodies = window.MOCK.synthMelodies || [];
+    const KW = 100 / WHITE.length;
+    let tuneIndex = 0;
+
+    body.innerHTML = `
+      <div class="synth premium-demo v4" style="--accent:${accent}">
+        <div class="screen"><canvas class="scope" width="440" height="104"></canvas></div>
+        <div class="piano"></div>
+        <div class="row">
+          <div class="waves" role="group" aria-label="Waveform">
+            ${WAVES.map((w, i) => `<button class="pbtn chip ${i === 0 ? "active" : ""}" data-wave="${w}">${w[0].toUpperCase() + w.slice(1)}</button>`).join("")}
+          </div>
+          <button class="pbtn primary" data-tune>▶ Play a tune</button>
+        </div>
+        <div class="readout">Tap the piano or hit play.</div>
+      </div>`;
+
+    const piano = body.querySelector(".piano");
+    piano.innerHTML =
+      WHITE.map((n, i) => `<span class="pkey white" data-n="${n}" style="left:${i * KW}%;width:${KW}%"></span>`).join("") +
+      BLACKS.map(([n, b]) => `<span class="pkey black" data-n="${n}" style="left:${(b + 1) * KW - KW * 0.275}%;width:${KW * 0.55}%"></span>`).join("");
+
+    const scope = body.querySelector(".scope");
+    const sctx = scope.getContext("2d");
+    const readout = body.querySelector(".readout");
+    let wave = "sawtooth";
+    let audio, bus, analyser;
+    let heldNote = null, heldVoices = [];
+
+    function ensureAudio() {
+      if (!audio) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audio = new AC();
+        analyser = audio.createAnalyser();
+        analyser.fftSize = 1024;
+        bus = audio.createGain();
+        bus.gain.value = 0.0;
+        bus.connect(analyser).connect(audio.destination);
+      }
+      if (audio.state === "suspended") audio.resume();
+    }
+    function startNote(freq, dur, sustain) {
+      ensureAudio();
+      const now = audio.currentTime;
+      const g = audio.createGain();
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.22, now + 0.02);
+      if (sustain) g.gain.linearRampToValueAtTime(0.22, now + dur);
+      else g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      g.connect(bus);
+      const o = audio.createOscillator();
+      o.type = wave;
+      o.frequency.value = freq;
+      o.connect(g);
+      o.start(now);
+      o.stop(now + dur + 0.05);
+      return { g };
+    }
+    function releaseVoices() {
+      if (!audio) return;
+      const now = audio.currentTime;
+      heldVoices.forEach((v) => {
+        try {
+          v.g.gain.cancelScheduledValues(now);
+          v.g.gain.setValueAtTime(0.0001, now);
+          v.g.gain.linearRampToValueAtTime(0.0001, now + 0.12);
+        } catch (e) {}
+      });
+      heldVoices = [];
+    }
+    function lightKey(n, on) {
+      const el = piano.querySelector('[data-n="' + n + '"]');
+      if (el) el.classList.toggle("on", on);
+    }
+
+    body.querySelectorAll(".chip").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        ripple(btn, e);
+        wave = btn.getAttribute("data-wave");
+        body.querySelectorAll(".chip").forEach((x) => x.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+    piano.addEventListener("pointerdown", (e) => {
+      const el = e.target.closest(".pkey");
+      if (!el) return;
+      e.preventDefault();
+      ensureAudio();
+      const n = el.getAttribute("data-n");
+      heldNote = n;
+      heldVoices.push(startNote(noteToFreq(n), 1, true));
+      lightKey(n, true);
+      readout.textContent = n + " · " + noteToFreq(n).toFixed(1) + " Hz";
+    });
+    piano.addEventListener("pointermove", (e) => {
+      if (e.buttons === 0) return;
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      if (el && el.classList && el.classList.contains("pkey") && el.getAttribute("data-n") !== heldNote) {
+        releaseVoices();
+        lightKey(heldNote, false);
+        heldNote = el.getAttribute("data-n");
+        heldVoices.push(startNote(noteToFreq(heldNote), 1, true));
+        lightKey(heldNote, true);
+        readout.textContent = heldNote + " · " + noteToFreq(heldNote).toFixed(1) + " Hz";
+      }
+    });
+    window.addEventListener("pointerup", () => {
+      releaseVoices();
+      if (heldNote) lightKey(heldNote, false);
+      heldNote = null;
+    });
+    function playSeq(seq, tempo, name) {
+      ensureAudio();
+      const beat = 60 / tempo;
+      let t = 0;
+      seq.forEach(([n, beats]) => {
+        const dur = beats * beat * 0.92;
+        startNote(noteToFreq(n), dur, false);
+        setTimeout(() => lightKey(n, true), t * 1000);
+        setTimeout(() => lightKey(n, false), (t + dur) * 1000);
+        t += beats * beat;
+      });
+      readout.textContent = name;
+    }
+    body.querySelector("[data-tune]").addEventListener("click", (e) => {
+      ripple(e.currentTarget, e);
+      const m = melodies[tuneIndex % melodies.length];
+      tuneIndex++;
+      playSeq(m.notes, m.tempo, m.name);
+    });
+
+    function draw() {
+      requestAnimationFrame(draw);
+      sctx.clearRect(0, 0, scope.width, scope.height);
+      sctx.strokeStyle = "rgba(20,22,30,0.08)";
+      sctx.lineWidth = 1;
+      for (let yy = 0; yy < scope.height; yy += 16) {
+        sctx.beginPath(); sctx.moveTo(0, yy); sctx.lineTo(scope.width, yy); sctx.stroke();
+      }
+      const cy = scope.height / 2;
+      const amp = scope.height * 0.36;
+      const per = scope.width / 4;
+      const breathe = Math.sin(performance.now() / 600) * amp * 0.16;
+      sctx.strokeStyle = accent;
+      sctx.lineWidth = 3.4;
+      sctx.beginPath();
+      for (let x = 0; x <= scope.width; x++) {
+        let y = cy + breathe;
+        if (wave === "sine") y = cy + Math.sin((x / scope.width) * Math.PI * 2) * amp;
+        else if (wave === "square") y = (x % (scope.width / 2) < scope.width / 4) ? cy - amp : cy + amp;
+        else y = cy + amp * (1 - 2 * ((x % per) / per));
+        x === 0 ? sctx.moveTo(x, y) : sctx.lineTo(x, y);
+      }
+      sctx.stroke();
+    }
+    draw();
+  };
+
   // 2. Mildred Pierce — channel surfer with animated scenes.
   demos.channels = function (body) {
     body.innerHTML = `

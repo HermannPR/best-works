@@ -382,3 +382,11 @@ footer a:hover { color: var(--text); }
 .figures { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0; }
 .figures canvas { width: 100%; height: auto; background: #fff; border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 10px; }
 .synth.v3 .wavefig { height: 150px; }
+
+.synth.v4 .scope { width: 100%; height: auto; background: linear-gradient(180deg, #fbfbfc, #f1f1f4); border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 12px; }
+.piano { position: relative; height: 46px; user-select: none; touch-action: none; }
+.pkey { position: absolute; top: 0; bottom: 0; border-radius: 0 0 6px 6px; cursor: pointer; }
+.pkey.white { background: linear-gradient(180deg, #fff, #e9ecf0); border: 1px solid rgba(0, 0, 0, 0.12); transition: background 0.08s; }
+.pkey.white.on, .pkey.white:active { background: color-mix(in srgb, var(--accent) 32%, #fff); }
+.pkey.black { height: 60%; background: linear-gradient(180deg, #2a2d35, #454a55); z-index: 2; border-radius: 0 0 4px 4px; }
+.pkey.black.on { background: var(--accent); }
