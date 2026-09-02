@@ -1038,6 +1038,135 @@
     render();
   };
 
+  // 2b. Mildred Pierce (band site) — debut single, platform links, visual, TV easter egg.
+  demos.channels = function (body, accent) {
+    accent = accent || "#00c8ff";
+    body.style.setProperty("--accent", accent);
+    const LINKS = [
+      { label: "Spotify", url: "https://open.spotify.com/intl-es/album/52QhMekZYeTTFNOx14Kkla", color: "#1DB954" },
+      { label: "Apple Music", url: "https://music.apple.com/mx/album/fractal-agreement-single/1896399020", color: "#00c8ff" },
+      { label: "YouTube", url: "https://youtu.be/wGk5GWPWHzo", color: "#ff4e45" },
+      { label: "Instagram", url: "https://www.instagram.com/mildredpierce.__", color: "#e1306c" },
+    ];
+    body.innerHTML = `
+      <div class="band premium-demo" style="--accent:${accent}">
+        <div class="band-head">
+          <span class="band-kicker">MILDRED PIERCE</span>
+          <span class="band-single">FRACTAL AGREEMENT — out now</span>
+        </div>
+        <div class="band-mid">
+          <canvas class="band-disc" width="96" height="96"></canvas>
+          <canvas class="band-eq" width="160" height="96"></canvas>
+        </div>
+        <div class="platforms">
+          ${LINKS.map((l) => `<a class="pbtn plat" href="${l.url}" target="_blank" rel="noopener">${l.label} <span>↗</span></a>`).join("")}
+        </div>
+        <div class="tv-row">
+          <button class="pbtn chip tv" data-tv>📺 Channel surf</button>
+        </div>
+        <div class="tvroom" hidden>
+          <canvas width="440" height="150"></canvas>
+          <div class="tv-ctrl">
+            <button class="pbtn chip" data-prev>◄ Prev</button>
+            <button class="pbtn chip" data-next>Next ►</button>
+          </div>
+          <div class="readout">CH 01</div>
+        </div>
+        <div class="readout">Debut single. The TV is a secret.</div>
+      </div>`;
+
+    const disc = body.querySelector(".band-disc");
+    const dctx = disc.getContext("2d");
+    const eq = body.querySelector(".band-eq");
+    const ectx = eq.getContext("2d");
+    const tvBtn = body.querySelector("[data-tv]");
+    const room = body.querySelector(".tvroom");
+    const tvc = room.querySelector("canvas");
+    const tctx = tvc.getContext("2d");
+    const tRead = room.querySelector(".readout");
+    const CH = window.MOCK.channels || [];
+    const band = body.querySelector(".band");
+    let t = 0, t2 = 0, idx = 0, tvOn = false;
+
+    function drawDisc() {
+      dctx.clearRect(0, 0, 96, 96);
+      dctx.save();
+      dctx.translate(48, 48);
+      dctx.rotate(t * 0.6);
+      dctx.fillStyle = "#0a0a0e";
+      dctx.beginPath(); dctx.arc(0, 0, 44, 0, 7); dctx.fill();
+      dctx.strokeStyle = "rgba(255,255,255,0.12)";
+      for (let r = 12; r < 40; r += 6) { dctx.beginPath(); dctx.arc(0, 0, r, 0, 7); dctx.stroke(); }
+      dctx.fillStyle = accent;
+      dctx.beginPath(); dctx.arc(0, 0, 5, 0, 7); dctx.fill();
+      dctx.restore();
+    }
+    function drawEq() {
+      ectx.clearRect(0, 0, 160, 96);
+      const bars = 20, bw = 160 / bars;
+      for (let i = 0; i < bars; i++) {
+        const v = (Math.sin(t * 3 + i * 0.5) + 1) / 2 * 0.62 + 0.18;
+        const h = v * 82;
+        ectx.fillStyle = accent;
+        ectx.globalAlpha = 0.85;
+        ectx.fillRect(i * bw + 1.5, 96 - h, bw - 3, h);
+      }
+      ectx.globalAlpha = 1;
+    }
+    function drawScene(c) {
+      if (!c) return;
+      if (c.kind === "static") {
+        tctx.fillStyle = "#05060a";
+        tctx.fillRect(0, 0, tvc.width, tvc.height);
+        for (let y = 0; y < tvc.height; y += 2) for (let x = 0; x < tvc.width; x += 2) {
+          const v = Math.random();
+          tctx.fillStyle = "rgba(255,255,255," + (v * 0.5) + ")";
+          tctx.fillRect(x, y, 2, 2);
+        }
+        return;
+      }
+      const h = c.hue;
+      const g = tctx.createLinearGradient(0, 0, 0, tvc.height);
+      g.addColorStop(0, "hsl(" + h + ",60%,12%)");
+      g.addColorStop(1, "hsl(" + ((h + 30) % 360) + ",70%,24%)");
+      tctx.fillStyle = g; tctx.fillRect(0, 0, tvc.width, tvc.height);
+      if (c.kind === "sunset") {
+        tctx.fillStyle = "hsl(" + h + ",80%,62%)";
+        tctx.beginPath(); tctx.arc(tvc.width * 0.5, tvc.height * 0.7, 36, 0, 7); tctx.fill();
+        tctx.fillStyle = "rgba(0,0,0,0.5)"; tctx.fillRect(0, tvc.height * 0.7, tvc.width, tvc.height);
+      } else if (c.kind === "waves") {
+        tctx.strokeStyle = "rgba(255,255,255,0.7)"; tctx.lineWidth = 3;
+        for (let w = 0; w < 4; w++) { tctx.beginPath(); for (let x = 0; x <= tvc.width; x++) { const y = tvc.height * (0.4 + w * 0.12) + Math.sin((x / 30) + t2 + w) * 8; tctx.lineTo(x, y); } tctx.stroke(); }
+      } else if (c.kind === "orbit") {
+        tctx.strokeStyle = "rgba(255,255,255,0.6)"; tctx.lineWidth = 2;
+        const cx = tvc.width / 2, cy = tvc.height / 2;
+        for (let o = 0; o < 4; o++) { tctx.beginPath(); for (let a = 0; a <= 7; a += 0.05) { const r = 20 + o * 15; const x = cx + Math.cos(a + t2) * r, y = cy + Math.sin(a * 2.5 + t2) * r * 0.6; a === 0 ? tctx.moveTo(x, y) : tctx.lineTo(x, y); } tctx.stroke(); }
+      }
+    }
+    function show() {
+      const c = CH[idx % CH.length] || { kind: "static", label: "STATIC" };
+      drawScene(c);
+      tRead.textContent = "CH " + String((idx % CH.length) + 1).padStart(2, "0") + " · " + (c.label || "");
+    }
+    tvBtn.addEventListener("click", (e) => {
+      ripple(tvBtn, e);
+      tvOn = !tvOn;
+      room.hidden = !tvOn;
+      tvBtn.classList.toggle("active", tvOn);
+      if (tvOn) show();
+    });
+    room.querySelector("[data-prev]").addEventListener("click", (e) => { ripple(e.currentTarget, e); idx = (idx - 1 + CH.length) % CH.length; show(); });
+    room.querySelector("[data-next]").addEventListener("click", (e) => { ripple(e.currentTarget, e); idx = (idx + 1) % CH.length; show(); });
+
+    function loop() {
+      requestAnimationFrame(loop);
+      t += 0.016; t2 += 0.016;
+      drawDisc(); drawEq();
+      if (tvOn) drawScene(CH[idx % CH.length] || { kind: "static" });
+    }
+    loop();
+  };
+
   // 3. Lumina — a bookable seat grid (local state only).
   demos.reservations = function (body, accent) {
     const seats = window.MOCK.seats;

@@ -21,10 +21,10 @@ window.PROJECTS = [
   {
     id: "mildred-pierce",
     name: "Mildred Pierce",
-    tagline: "Channel-surfing web game.",
-    desc: "A full-stack creative product. A platformer with a CRT presentation, a tamagotchi companion, leaderboards, and recording uploads. Next.js on the server, Three.js in the browser, real API routes and a Postgres database behind it.",
-    stack: ["Next.js", "React", "Three.js", "Tailwind", "PostgreSQL", "Framer Motion"],
-    accent: "#c5a03a",
+    tagline: "Transmedia website for the band — debut single out now.",
+    desc: "The band's site: the debut single FRACTAL AGREEMENT with links to Spotify, Apple Music, YouTube and Instagram, plus a channel-surfing platformer, a virtual companion, leaderboards and recording uploads. Next.js, Three.js and real API routes.",
+    stack: ["Next.js", "React", "Three.js", "TypeScript", "Tailwind", "PostgreSQL"],
+    accent: "#00c8ff",
     demo: "channels",
     repo: "https://github.com/HermannPR/MildredPierce",
     demoUrl: "https://mildred-pierce.vercel.app"
@@ -138,10 +138,10 @@ window.PROJECTS = [
 // Hardcoded mock data for the interactive demos.
 window.MOCK = {
   channels: [
-    { label: "CH 01", kind: "static" },
-    { label: "CH 02", kind: "sunset", hue: 18 },
-    { label: "CH 03", kind: "waves", hue: 100 },
-    { label: "CH 04", kind: "orbit", hue: 260 }
+    { label: "Static", kind: "static" },
+    { label: "Sunset", kind: "sunset", hue: 18 },
+    { label: "Waves", kind: "waves", hue: 100 },
+    { label: "Orbit", kind: "orbit", hue: 260 }
   ],
   seats: Array.from({ length: 30 }, (_, i) => ({
     id: i,
