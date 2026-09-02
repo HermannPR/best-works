@@ -404,3 +404,18 @@ footer a:hover { color: var(--text); }
 .tv-row { display: flex; }
 .tvroom canvas { width: 100%; height: auto; background: #05060a; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; margin-top: 8px; }
 .tv-ctrl { display: flex; gap: 8px; margin-top: 8px; }
+
+.band.premium-demo { display: flex; flex-direction: column; gap: 12px; }
+.band .tvrow { display: flex; align-items: center; gap: 8px; }
+.tv { flex: 1; position: relative; border-radius: 12px; overflow: hidden; background: #05060a; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5); }
+.tv::before { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.25) 2px, rgba(0, 0, 0, 0.25) 3px); }
+.tv::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(ellipse at 50% 42%, transparent 30%, rgba(0, 0, 0, 0.55) 75%, rgba(0, 0, 0, 0.85) 100%); }
+.tv-screen { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #05060a; }
+.tv-screen iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.tv-screen .tv-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tvbtn { flex: 0 0 auto; }
+.game-btns { position: absolute; bottom: 8px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; z-index: 3; }
+.game-btns .pbtn { padding: 6px 12px; }
+.tv-info { margin-top: 2px; font-family: var(--mono); font-size: 11px; color: #9a9aa6; }
+.tv-info .tv-index { color: var(--accent); font-weight: 700; }
+.tv-info .tv-label { color: #e9e9ee; }

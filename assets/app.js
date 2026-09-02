@@ -1167,6 +1167,210 @@
     loop();
   };
 
+  // 2c. Mildred Pierce — mini-TV (song embed + minigames + visual channels).
+  demos.channels = function (body, accent) {
+    accent = accent || "#00c8ff";
+    body.style.setProperty("--accent", accent);
+    const TV = window.MOCK.mildredTV || { videoId: "", channels: [] };
+    const CH = TV.channels;
+    const VIDEO_ID = TV.videoId;
+    const W = 440, H = 250;
+    const LINKS = [
+      { label: "Spotify", url: "https://open.spotify.com/intl-es/album/52QhMekZYeTTFNOx14Kkla" },
+      { label: "Apple Music", url: "https://music.apple.com/mx/album/fractal-agreement-single/1896399020" },
+      { label: "YouTube", url: "https://youtu.be/wGk5GWPWHzo" },
+      { label: "Instagram", url: "https://www.instagram.com/mildredpierce.__" },
+    ];
+    body.innerHTML = `
+      <div class="band premium-demo" style="--accent:${accent}">
+        <div class="band-head">
+          <span class="band-kicker">MILDRED PIERCE</span>
+          <span class="band-single">FRACTAL AGREEMENT — out now</span>
+        </div>
+        <div class="tvrow">
+          <button class="pbtn chip tvbtn" data-prev aria-label="Previous channel">◄</button>
+          <div class="tv">
+            <div class="tv-screen"></div>
+          </div>
+          <button class="pbtn chip tvbtn" data-next aria-label="Next channel">►</button>
+        </div>
+        <div class="tv-info"></div>
+        <div class="platforms">
+          ${LINKS.map((l) => `<a class="pbtn plat" href="${l.url}" target="_blank" rel="noopener">${l.label} <span>↗</span></a>`).join("")}
+        </div>
+        <div class="readout">Spin the dial: song, minigames, visuals.</div>
+      </div>`;
+
+    const screen = body.querySelector(".tv-screen");
+    const info = body.querySelector(".tv-info");
+    let idx = 0, cleanup = null;
+
+    function drawScene(ctx, ch, t) {
+      ctx.clearRect(0, 0, W, H);
+      if (ch.kind === "static") {
+        ctx.fillStyle = "#05060a"; ctx.fillRect(0, 0, W, H);
+        for (let y = 0; y < H; y += 3) for (let x = 0; x < W; x += 3) {
+          const v = Math.random();
+          ctx.fillStyle = "rgba(255,255,255," + (v * 0.5) + ")";
+          ctx.fillRect(x, y, 3, 3);
+        }
+        return;
+      }
+      const h = ch.hue;
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, "hsl(" + h + ",60%,12%)");
+      g.addColorStop(1, "hsl(" + ((h + 30) % 360) + ",70%,24%)");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      if (ch.kind === "sunset") {
+        ctx.fillStyle = "hsl(" + h + ",80%,62%)";
+        ctx.beginPath(); ctx.arc(W * 0.5, H * 0.7, 40, 0, 7); ctx.fill();
+        ctx.fillStyle = "rgba(0,0,0,0.5)"; ctx.fillRect(0, H * 0.7, W, H);
+      } else if (ch.kind === "waves") {
+        ctx.strokeStyle = "rgba(255,255,255,0.7)"; ctx.lineWidth = 3;
+        for (let w = 0; w < 4; w++) { ctx.beginPath(); for (let x = 0; x <= W; x++) { const y = H * (0.4 + w * 0.12) + Math.sin((x / 30) + t + w) * 8; ctx.lineTo(x, y); } ctx.stroke(); }
+      } else if (ch.kind === "orbit") {
+        ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 2;
+        const cx = W / 2, cy = H / 2;
+        for (let o = 0; o < 4; o++) { ctx.beginPath(); for (let a = 0; a <= 7; a += 0.05) { const r = 24 + o * 18; const x = cx + Math.cos(a + t) * r, y = cy + Math.sin(a * 2.5 + t) * r * 0.6; a === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke(); }
+      }
+    }
+
+    function mountVideo() {
+      const f = document.createElement("iframe");
+      f.src = "https://www.youtube-nocookie.com/embed/" + VIDEO_ID + "?rel=0&modestbranding=1&playsinline=1";
+      f.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+      f.allowFullscreen = true;
+      f.className = "yt";
+      screen.appendChild(f);
+    }
+    function mountScene(ch) {
+      const c = document.createElement("canvas");
+      c.width = W; c.height = H; c.className = "tv-canvas";
+      screen.appendChild(c);
+      const ctx = c.getContext("2d");
+      let t = 0, raf;
+      const loop = () => { raf = requestAnimationFrame(loop); t += 0.02; drawScene(ctx, ch, t); };
+      loop();
+      return () => cancelAnimationFrame(raf);
+    }
+    function buttons(list) {
+      const row = document.createElement("div");
+      row.className = "game-btns";
+      list.forEach(([label, on, off]) => {
+        const b = document.createElement("button");
+        b.className = "pbtn chip";
+        b.textContent = label;
+        b.addEventListener("pointerdown", (e) => { e.preventDefault(); on(); b.classList.add("active"); });
+        const end = (e) => { off && off(); b.classList.remove("active"); };
+        b.addEventListener("pointerup", end);
+        b.addEventListener("pointerleave", end);
+        row.appendChild(b);
+      });
+      screen.appendChild(row);
+    }
+
+    function mountPlatformer() {
+      const c = document.createElement("canvas");
+      c.width = W; c.height = H; c.className = "tv-canvas";
+      screen.appendChild(c);
+      const ctx = c.getContext("2d");
+      const keys = { left: false, right: false };
+      const g = 0.5, move = 3, jumpV = -10;
+      const plats = [
+        { x: 0, y: H - 14, w: W, h: 14 },
+        { x: 120, y: H - 74, w: 96, h: 12 },
+        { x: 272, y: H - 132, w: 96, h: 12 },
+      ];
+      let p = { x: 30, y: H - 40, w: 18, h: 26, vx: 0, vy: 0, onGround: false };
+      let cleared = false, raf;
+      buttons([["◄", () => keys.left = true, () => keys.left = false], ["▲", jump, null], ["►", () => keys.right = true, () => keys.right = false]]);
+      function jump() { if (p.onGround) { p.vy = jumpV; p.onGround = false; } }
+      const key = (e, down) => {
+        const k = e.key;
+        if (k === "ArrowLeft") { keys.left = down; if (down) e.preventDefault(); }
+        else if (k === "ArrowRight") { keys.right = down; if (down) e.preventDefault(); }
+        else if ((k === "ArrowUp" || k === " " ) && down) jump();
+      };
+      const onKeyDown = (e) => key(e, true);
+      const onKeyUp = (e) => key(e, false);
+      window.addEventListener("keydown", onKeyDown);
+      window.addEventListener("keyup", onKeyUp);
+      const reset = () => { p = { x: 30, y: H - 40, w: 18, h: 26, vx: 0, vy: 0, onGround: false }; cleared = false; };
+      const loop = () => {
+        raf = requestAnimationFrame(loop);
+        p.vx = (keys.right ? move : 0) - (keys.left ? move : 0);
+        p.vy += g;
+        p.x += p.vx; p.y += p.vy;
+        p.onGround = false;
+        const px = p.x, pw = p.w, py = p.y, ph = p.h;
+        for (const pf of plats) {
+          if (py + ph >= pf.y && py + ph <= pf.y + pf.h + 8 && px + pw > pf.x && px < pf.x + pf.w) {
+            p.y = pf.y - ph; p.vy = 0; p.onGround = true;
+          }
+        }
+        if (px + pw >= 430 - 26) cleared = true;
+        if (p.y > H + 40) reset();
+        ctx.fillStyle = "#05060a"; ctx.fillRect(0, 0, W, H);
+        ctx.strokeStyle = "rgba(255,255,255,0.06)"; ctx.lineWidth = 1;
+        for (let yy = 0; yy < H; yy += 24) { ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(W, yy); ctx.stroke(); }
+        ctx.fillStyle = accent;
+        for (const pf of plats) ctx.fillRect(pf.x, pf.y, pf.w, pf.h);
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(430 - 26, H - 132 - 26, 22, 22);
+        ctx.fillStyle = "#e9e9ee";
+        ctx.fillRect(p.x, p.y, p.w, p.h);
+        ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.font = "bold 16px monospace";
+        ctx.fillText(cleared ? "CLEAR!" : "Reach the block ▸", 14, 26);
+      };
+      loop();
+      return () => { cancelAnimationFrame(raf); window.removeEventListener("keydown", onKeyDown); window.removeEventListener("keyup", onKeyUp); };
+    }
+
+    function mountCatcher() {
+      const c = document.createElement("canvas");
+      c.width = W; c.height = H; c.className = "tv-canvas";
+      screen.appendChild(c);
+      const ctx = c.getContext("2d");
+      let px = W / 2, padW = 70, score = 0, raf;
+      let dots = [];
+      for (let i = 0; i < 6; i++) dots.push(spawn());
+      function spawn() { return { x: 20 + Math.random() * (W - 40), y: -10 - Math.random() * H * 0.5, r: 5 + Math.random() * 5, vy: 1.6 + Math.random() * 1.4 }; }
+      const moveScreen = (e) => { const r = c.getBoundingClientRect(); px = (e.clientX - r.left) / r.width * W; };
+      c.addEventListener("pointermove", moveScreen);
+      const loop = () => {
+        raf = requestAnimationFrame(loop);
+        ctx.fillStyle = "#05060a"; ctx.fillRect(0, 0, W, H);
+        ctx.strokeStyle = "rgba(255,255,255,0.06)"; ctx.lineWidth = 1;
+        for (let y = 0; y < H; y += 24) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+        for (const d of dots) {
+          d.y += d.vy;
+          if (d.y > H + 20) { d.x = 20 + Math.random() * (W - 40); d.y = -10; }
+          if (d.y > H - 20 && d.y < H - 4 && Math.abs(d.x - px) < padW / 2 + d.r) { score++; d.y = -10; d.x = 20 + Math.random() * (W - 40); }
+          ctx.fillStyle = accent; ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, 7); ctx.fill();
+        }
+        ctx.fillStyle = "#e9e9ee";
+        ctx.fillRect(px - padW / 2, H - 20, padW, 12);
+        ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.font = "bold 16px monospace";
+        ctx.fillText("Catch: " + score, 14, 26);
+      };
+      loop();
+      return () => cancelAnimationFrame(raf);
+    }
+
+    function mount() {
+      if (cleanup) cleanup(); cleanup = null;
+      screen.innerHTML = "";
+      const ch = CH[idx % CH.length];
+      info.innerHTML = `<span class="tv-index">${String((idx % CH.length) + 1).padStart(2, "0")}</span> · <span class="tv-label">${ch.label}</span>`;
+      if (ch.type === "video") mountVideo();
+      else if (ch.type === "game") cleanup = ch.id === "platformer" ? mountPlatformer() : mountCatcher();
+      else cleanup = mountScene(ch);
+    }
+    body.querySelector("[data-prev]").addEventListener("click", (e) => { ripple(e.currentTarget, e); idx = (idx - 1 + CH.length) % CH.length; mount(); });
+    body.querySelector("[data-next]").addEventListener("click", (e) => { ripple(e.currentTarget, e); idx = (idx + 1) % CH.length; mount(); });
+    mount();
+  };
+
   // 3. Lumina — a bookable seat grid (local state only).
   demos.reservations = function (body, accent) {
     const seats = window.MOCK.seats;

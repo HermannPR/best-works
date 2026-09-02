@@ -175,5 +175,17 @@ window.MOCK = {
       ["E5",0.5],["D#5",0.5],["E5",0.5],["D#5",0.5],["E5",0.5],["B4",0.5],["D5",0.5],["C5",0.5],
       ["A4",1],["C4",0.5],["E4",0.5],["A4",0.5],["B4",1],["E4",0.5],["G#4",0.5],["B4",0.5],["C5",1]
     ]}
-  ]
+  ],
+  // Mildred Pierce mini-TV: the single as a YouTube channel, plus minigames and visuals.
+  mildredTV: {
+    videoId: "wGk5GWPWHzo",
+    channels: [
+      { id: "song", label: "FRACTAL AGREEMENT", type: "video" },
+      { id: "platformer", label: "JUMP", type: "game" },
+      { id: "catcher", label: "CATCH", type: "game" },
+      { id: "waves", label: "WAVES", type: "scene", kind: "waves", hue: 100 },
+      { id: "orbit", label: "ORBIT", type: "scene", kind: "orbit", hue: 260 },
+      { id: "static", label: "STATIC", type: "scene", kind: "static" }
+    ]
+  }
 };
