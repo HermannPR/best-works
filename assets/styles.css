@@ -372,3 +372,13 @@ footer a:hover { color: var(--text); }
 .premium-demo .scope { width: 100%; height: auto; background: #fff; border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 10px; }
 .row { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
 .chip { padding: 6px 12px; font-size: 12px; }
+
+.synth.v3 .vrow { display: flex; gap: 12px; align-items: stretch; }
+.vkeys { display: flex; flex-direction: column; width: 58px; gap: 2px; }
+.vkeys .key { position: relative; top: auto; bottom: auto; border-radius: 6px; }
+.vkeys .key.white { background: #fff; border: 1px solid rgba(0, 0, 0, 0.12); }
+.vkeys .key.black { height: auto; flex: 1; background: #23262d; margin-right: 20px; z-index: auto; border-radius: 6px; }
+.vkeys .key.white.on, .vkeys .key.black.on { background: var(--accent); }
+.figures { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 0; }
+.figures canvas { width: 100%; height: auto; background: #fff; border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 10px; }
+.synth.v3 .wavefig { height: 150px; }
