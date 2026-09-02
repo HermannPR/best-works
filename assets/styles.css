@@ -390,3 +390,17 @@ footer a:hover { color: var(--text); }
 .pkey.white.on, .pkey.white:active { background: color-mix(in srgb, var(--accent) 38%, #cfd2d8); }
 .pkey.black { height: 60%; background: linear-gradient(180deg, #09090c, #1a1d24); z-index: 2; border-radius: 0 0 4px 4px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); }
 .pkey.black.on { background: var(--accent); }
+
+.band.premium-demo { --accent: #00c8ff; }
+.band-head { display: flex; flex-direction: column; gap: 3px; }
+.band-kicker { font-family: var(--mono); font-weight: 800; letter-spacing: 0.24em; font-size: 15px; color: #fff; }
+.band-single { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--accent); }
+.band-mid { display: flex; align-items: center; gap: 16px; }
+.band-disc { flex: 0 0 96px; width: 96px; height: 96px; background: #0a0a0e; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; }
+.band-eq { flex: 1; min-width: 0; width: 100%; height: 96px; background: #0a0a0e; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; }
+.platforms { display: flex; flex-wrap: wrap; gap: 8px; }
+.plat { display: inline-flex; align-items: center; gap: 8px; }
+.plat span { opacity: 0.7; }
+.tv-row { display: flex; }
+.tvroom canvas { width: 100%; height: auto; background: #05060a; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; margin-top: 8px; }
+.tv-ctrl { display: flex; gap: 8px; margin-top: 8px; }
