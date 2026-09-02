@@ -597,6 +597,203 @@
     draw();
   };
 
+  // 1d. folk-park (v3 — vertical keyboard + notes-in-time roller).
+  demos.synth = function (body, accent) {
+    const WAVES = ["sawtooth", "sine", "square"];
+    const KEYS = ["C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4"];
+    const BLACK = new Set(["C#4", "D#4", "F#4", "G#4", "A#4"]);
+    const melodies = window.MOCK.synthMelodies || [];
+    let tuneIndex = 0;
+
+    body.innerHTML = `
+      <div class="synth premium-demo v3" style="--accent:${accent}">
+        <div class="vrow">
+          <div class="vkeys"></div>
+          <div class="figures">
+            <canvas class="wavefig" width="230" height="150"></canvas>
+            <canvas class="roller" width="230" height="84"></canvas>
+          </div>
+        </div>
+        <div class="row">
+          <div class="waves" role="group" aria-label="Waveform">
+            ${WAVES.map((w, i) => `<button class="pbtn chip ${i === 0 ? "active" : ""}" data-wave="${w}">${w[0].toUpperCase() + w.slice(1)}</button>`).join("")}
+          </div>
+          <button class="pbtn primary" data-tune>▶ Play a tune</button>
+        </div>
+        <div class="readout">Tap the keys or hit play.</div>
+      </div>`;
+
+    const keysWrap = body.querySelector(".vkeys");
+    keysWrap.innerHTML = KEYS.slice().reverse().map((n) => `<div class="key ${BLACK.has(n) ? "black" : "white"}" data-n="${n}"></div>`).join("");
+
+    const fig = body.querySelector(".wavefig");
+    const fctx = fig.getContext("2d");
+    const roller = body.querySelector(".roller");
+    const rctx = roller.getContext("2d");
+    const readout = body.querySelector(".readout");
+    let wave = "sawtooth";
+    let audio, bus, analyser;
+    let notes = [];
+    let heldNote = null, heldVoices = [];
+
+    function ensureAudio() {
+      if (!audio) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audio = new AC();
+        analyser = audio.createAnalyser();
+        analyser.fftSize = 1024;
+        bus = audio.createGain();
+        bus.gain.value = 0.0;
+        bus.connect(analyser).connect(audio.destination);
+      }
+      if (audio.state === "suspended") audio.resume();
+    }
+    function startNote(freq, dur, sustain) {
+      ensureAudio();
+      const now = audio.currentTime;
+      const g = audio.createGain();
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.22, now + 0.02);
+      if (sustain) g.gain.linearRampToValueAtTime(0.22, now + dur);
+      else g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      g.connect(bus);
+      const o = audio.createOscillator();
+      o.type = wave;
+      o.frequency.value = freq;
+      o.connect(g);
+      o.start(now);
+      o.stop(now + dur + 0.05);
+      return { g };
+    }
+    function releaseVoices() {
+      if (!audio) return;
+      const now = audio.currentTime;
+      heldVoices.forEach((v) => {
+        try {
+          v.g.gain.cancelScheduledValues(now);
+          v.g.gain.setValueAtTime(0.0001, now);
+          v.g.gain.linearRampToValueAtTime(0.0001, now + 0.12);
+        } catch (e) {}
+      });
+      heldVoices = [];
+    }
+    function noteIdx(n) { return KEYS.indexOf(n); }
+    function pushNote(n) { notes.push({ note: n, born: performance.now() }); }
+    function lightKey(n, on) {
+      const el = keysWrap.querySelector('[data-n="' + n + '"]');
+      if (el) el.classList.toggle("on", on);
+    }
+
+    body.querySelectorAll(".chip").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        ripple(btn, e);
+        wave = btn.getAttribute("data-wave");
+        body.querySelectorAll(".chip").forEach((x) => x.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+    keysWrap.addEventListener("pointerdown", (e) => {
+      const el = e.target.closest(".key");
+      if (!el) return;
+      e.preventDefault();
+      ensureAudio();
+      const n = el.getAttribute("data-n");
+      heldNote = n;
+      heldVoices.push(startNote(noteToFreq(n), 1, true));
+      lightKey(n, true);
+      pushNote(n);
+      readout.textContent = n + " · " + noteToFreq(n).toFixed(1) + " Hz";
+    });
+    keysWrap.addEventListener("pointermove", (e) => {
+      if (e.buttons === 0) return;
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      if (el && el.classList && el.classList.contains("key") && el.getAttribute("data-n") !== heldNote) {
+        releaseVoices();
+        lightKey(heldNote, false);
+        heldNote = el.getAttribute("data-n");
+        heldVoices.push(startNote(noteToFreq(heldNote), 1, true));
+        lightKey(heldNote, true);
+        pushNote(heldNote);
+        readout.textContent = heldNote + " · " + noteToFreq(heldNote).toFixed(1) + " Hz";
+      }
+    });
+    window.addEventListener("pointerup", () => {
+      releaseVoices();
+      if (heldNote) lightKey(heldNote, false);
+      heldNote = null;
+    });
+    function playSeq(seq, tempo, name) {
+      ensureAudio();
+      const beat = 60 / tempo;
+      let t = 0;
+      seq.forEach(([n, beats]) => {
+        const dur = beats * beat * 0.92;
+        startNote(noteToFreq(n), dur, false);
+        setTimeout(() => pushNote(n), t * 1000);
+        setTimeout(() => lightKey(n, true), t * 1000);
+        setTimeout(() => lightKey(n, false), (t + dur) * 1000);
+        t += beats * beat;
+      });
+      readout.textContent = name;
+    }
+    body.querySelector("[data-tune]").addEventListener("click", (e) => {
+      ripple(e.currentTarget, e);
+      const m = melodies[tuneIndex % melodies.length];
+      tuneIndex++;
+      playSeq(m.notes, m.tempo, m.name);
+    });
+
+    function drawWave(ctx, W, H) {
+      ctx.clearRect(0, 0, W, H);
+      ctx.strokeStyle = "rgba(20,22,30,0.08)";
+      ctx.lineWidth = 1;
+      for (let yy = 0; yy < H; yy += 15) { ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(W, yy); ctx.stroke(); }
+      const cy = H / 2;
+      const amp = H * 0.36;
+      const per = W / 4;
+      const breathe = Math.sin(performance.now() / 600) * amp * 0.18;
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 3.2;
+      ctx.beginPath();
+      for (let x = 0; x <= W; x++) {
+        let y = cy + breathe;
+        if (wave === "sine") y = cy + Math.sin((x / W) * Math.PI * 2) * amp;
+        else if (wave === "square") y = (x % (W / 2) < W / 4) ? cy - amp : cy + amp;
+        else y = cy + amp * (1 - 2 * ((x % per) / per));
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    function drawRoller() {
+      const W = roller.width, H = roller.height;
+      rctx.clearRect(0, 0, W, H);
+      rctx.strokeStyle = "rgba(20,22,30,0.08)";
+      rctx.lineWidth = 1;
+      for (let yy = 0; yy < H; yy += 14) { rctx.beginPath(); rctx.moveTo(0, yy); rctx.lineTo(W, yy); rctx.stroke(); }
+      const now = performance.now();
+      notes = notes.filter((n) => now - n.born < 3000);
+      const topIdx = KEYS.length - 1;
+      notes.forEach((n) => {
+        const idx = noteIdx(n.note);
+        const y = (topIdx - idx) / (KEYS.length - 1) * (H - 14) + 7;
+        const age = (now - n.born) / 3000;
+        const x = W * (1 - age) - 18;
+        rctx.globalAlpha = Math.max(0, 1 - age);
+        rctx.fillStyle = accent;
+        rctx.beginPath();
+        rctx.roundRect(x, y, 34, 10, 5);
+        rctx.fill();
+      });
+      rctx.globalAlpha = 1;
+    }
+    function draw() {
+      requestAnimationFrame(draw);
+      drawWave(fctx, fig.width, fig.height);
+      drawRoller();
+    }
+    draw();
+  };
+
   // 2. Mildred Pierce — channel surfer with animated scenes.
   demos.channels = function (body) {
     body.innerHTML = `
