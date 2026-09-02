@@ -159,5 +159,21 @@ window.MOCK = {
     { name: "RC Car", price: 899, swatch: "#6fae6c" },
     { name: "Puzzle 500pc", price: 189, swatch: "#9d8bc2" },
     { name: "Doll Set", price: 419, swatch: "#c5a03a" }
+  ],
+  // Iconic (public-domain) melody presets for the folk-park synth demo.
+  // notes: [ [note, beats], ... ]. Replace with your own melodies here.
+  synthMelodies: [
+    { name: "Ode to Joy", tempo: 112, notes: [
+      ["E4",1],["E4",1],["F4",1],["G4",1],["G4",1],["F4",1],["E4",1],["D4",1],
+      ["C4",1],["C4",1],["D4",1],["E4",1],["E4",1.5],["D4",0.5],["D4",2]
+    ]},
+    { name: "Twinkle Twinkle", tempo: 108, notes: [
+      ["C4",1],["C4",1],["G4",1],["G4",1],["A4",1],["A4",1],["G4",2],
+      ["F4",1],["F4",1],["E4",1],["E4",1],["D4",1],["D4",1],["C4",2]
+    ]},
+    { name: "Für Elise", tempo: 96, notes: [
+      ["E5",0.5],["D#5",0.5],["E5",0.5],["D#5",0.5],["E5",0.5],["B4",0.5],["D5",0.5],["C5",0.5],
+      ["A4",1],["C4",0.5],["E4",0.5],["A4",0.5],["B4",1],["E4",0.5],["G#4",0.5],["B4",0.5],["C5",1]
+    ]}
   ]
 };

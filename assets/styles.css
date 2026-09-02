@@ -304,3 +304,66 @@ footer a:hover { color: var(--text); }
   .grid { grid-template-columns: 1fr; }
   .hero { padding: 64px 20px 24px; }
 }
+/* --- Premium demo shell (light "faceplate" on the dark page) --- */
+.premium-demo {
+  --accent: #9d8bc2;
+  background: #f6f6f8;
+  color: #1a1c22;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  padding: 16px 16px 14px;
+  margin-top: 12px;
+}
+.synth.premium-demo { display: flex; flex-direction: column; gap: 12px; }
+
+.pbtn {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 550;
+  color: #1a1c22;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  padding: 8px 12px;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.pbtn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); }
+.pbtn:active { transform: translateY(0) scale(0.98); }
+.pbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.pbtn.active { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 16%, #fff); }
+.pbtn.primary { background: var(--accent); color: #fff; border-color: transparent; }
+.ripple {
+  position: absolute;
+  border-radius: 999px;
+  background: var(--accent);
+  opacity: 0.35;
+  transform: scale(0);
+  pointer-events: none;
+  animation: ripp 0.62s ease-out;
+}
+@keyframes ripp { to { transform: scale(2.4); opacity: 0; } }
+
+.waves { display: flex; gap: 8px; flex-wrap: wrap; }
+.wave { display: flex; align-items: center; gap: 8px; }
+.wave canvas.mini-wave { display: block; }
+
+.keys { position: relative; height: 64px; user-select: none; touch-action: none; }
+.key { position: absolute; top: 0; bottom: 0; border-radius: 0 0 5px 5px; }
+.key.white { background: #fff; border: 1px solid rgba(0, 0, 0, 0.12); }
+.key.white.on { background: color-mix(in srgb, var(--accent) 32%, #fff); }
+.key.black { height: 62%; background: #23262d; border-radius: 0 0 4px 4px; z-index: 2; }
+.key.black.on { background: var(--accent); }
+
+.scopes { display: flex; flex-direction: column; gap: 8px; }
+.scopes canvas { width: 100%; height: auto; background: #fff; border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 10px; }
+
+.melodies { display: flex; gap: 8px; flex-wrap: wrap; }
+.knobs { display: flex; gap: 20px; flex-wrap: wrap; }
+.knobs label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: #6b7280; font-weight: 600; }
+.knobs input[type="range"] { accent-color: var(--accent); width: 170px; }
+.readout { font-family: var(--mono); font-size: 12px; color: #6b7280; }

@@ -52,6 +52,47 @@
   // Demo registry (populated below, booted after all demos are registered).
   const demos = {};
 
+  // ----- Shared premium helpers (reused by every demo) -----
+  const SEMI = { C:0, "C#":1, D:2, "D#":3, E:4, F:5, "F#":6, G:7, "G#":8, A:9, "A#":10, B:11 };
+  function noteToFreq(n) {
+    const m = String(n).match(/^([A-G]#?)(\d)$/);
+    if (!m) return 440;
+    const semi = SEMI[m[1]] + (parseInt(m[2], 10) + 1) * 12;
+    return 440 * Math.pow(2, (semi - 69) / 12);
+  }
+  function ripple(btn, e) {
+    const r = btn.getBoundingClientRect();
+    const size = Math.max(r.width, r.height);
+    const s = document.createElement("span");
+    s.className = "ripple";
+    s.style.width = s.style.height = size + "px";
+    s.style.left = (e.clientX - r.left - size / 2) + "px";
+    s.style.top = (e.clientY - r.top - size / 2) + "px";
+    btn.appendChild(s);
+    setTimeout(() => s.remove(), 620);
+  }
+  function drawWaveShape(ctx, w, W, H, color) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const cy = H / 2;
+    const amp = H * 0.34;
+    const per = W / 4;
+    for (let x = 0; x <= W; x++) {
+      let y = cy;
+      if (w === "sine") y = cy + Math.sin((x / W) * Math.PI * 2) * amp;
+      else if (w === "square") y = (x % (W / 2) < W / 4) ? cy - amp : cy + amp;
+      else if (w === "triangle") {
+        const t = (x / W) * 4;
+        const frac = t % 1;
+        y = cy + ((t % 2 < 1 ? -1 + 2 * frac : 1 - 2 * frac) * amp);
+      } else y = cy + amp * (1 - 2 * ((x % per) / per));
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
   // ============================ DEMOS ============================
 
   // 1. folk-park — a tiny real-time oscillator + oscilloscope (WebAudio).
@@ -154,6 +195,238 @@
         i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
       }
       ctx.stroke();
+    }
+    draw();
+  };
+
+  // 1b. folk-park (premium) — keyboard, waveform preview, melodies, spectrum, knobs.
+  demos.synth = function (body, accent) {
+    const WAVES = ["sine", "square", "triangle", "sawtooth"];
+    const WHITE = ["C4", "D4", "E4", "F4", "G4", "A4", "B4"];
+    const BLACK_POS = { "C#4": 1, "D#4": 2, "F#4": 4, "G#4": 5, "A#4": 6 };
+    const KEYS = ["C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4"];
+    const melodies = window.MOCK.synthMelodies || [];
+    const KW = 100 / WHITE.length;
+
+    body.innerHTML = `
+      <div class="synth premium-demo" style="--accent:${accent}">
+        <div class="waves">${WAVES.map((w, i) =>
+          `<button class="pbtn wave ${i === WAVES.length - 1 ? "active" : ""}" data-wave="${w}" aria-label="${w}">
+             <canvas class="mini-wave" width="42" height="24"></canvas><span>${w[0].toUpperCase() + w.slice(1)}</span>
+           </button>`).join("")}
+        </div>
+        <div class="keys"></div>
+        <div class="scopes">
+          <canvas class="scope" width="460" height="106"></canvas>
+          <canvas class="spectrum" width="460" height="52"></canvas>
+        </div>
+        <div class="melodies">
+          ${melodies.map((m, i) => `<button class="pbtn mel" data-mel="${i}">${m.name}</button>`).join("")}
+          <button class="pbtn primary" data-arp>Arpeggio</button>
+        </div>
+        <div class="knobs">
+          <label>Filter <input type="range" min="300" max="6000" value="6000" step="50" data-ctl="filter"></label>
+          <label>Detune <input type="range" min="-40" max="40" value="0" step="2" data-ctl="detune"></label>
+        </div>
+        <div class="readout">Pick a waveform, tap a key, or play a melody.</div>
+      </div>`;
+
+    body.querySelectorAll(".wave").forEach((btn) => {
+      drawWaveShape(btn.querySelector("canvas").getContext("2d"), btn.getAttribute("data-wave"), 42, 24, "#1a1c22");
+    });
+
+    const keysWrap = body.querySelector(".keys");
+    keysWrap.innerHTML =
+      WHITE.map((n, i) => `<span class="key white" data-n="${n}" style="left:${i * KW}%;width:${KW}%"></span>`).join("") +
+      Object.entries(BLACK_POS).map(([n, before]) =>
+        `<span class="key black" data-n="${n}" style="left:${before * KW - KW * 0.285}%;width:${KW * 0.55}%"></span>`).join("");
+
+    const scope = body.querySelector(".scope");
+    const sctx = scope.getContext("2d");
+    const spec = body.querySelector(".spectrum");
+    const fctx = spec.getContext("2d");
+    const readout = body.querySelector(".readout");
+    let wave = "sawtooth";
+    let filterVal = 6000, detuneVal = 0;
+    let audio, bus, filter, analyser, freqData;
+    let heldNote = null, heldVoices = [];
+
+    function ensureAudio() {
+      if (!audio) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        audio = new AC();
+        analyser = audio.createAnalyser();
+        analyser.fftSize = 1024;
+        analyser.smoothingTimeConstant = 0.8;
+        filter = audio.createBiquadFilter();
+        filter.type = "lowpass";
+        filter.frequency.value = filterVal;
+        filter.Q.value = 0.8;
+        bus = audio.createGain();
+        bus.gain.value = 0.0;
+        bus.connect(filter).connect(analyser).connect(audio.destination);
+        freqData = new Uint8Array(analyser.frequencyBinCount);
+      }
+      if (audio.state === "suspended") audio.resume();
+    }
+
+    function startNote(freq, dur, sustain) {
+      ensureAudio();
+      const now = audio.currentTime;
+      const g = audio.createGain();
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(0.22, now + 0.02);
+      if (sustain) g.gain.linearRampToValueAtTime(0.22, now + dur);
+      else g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+      g.connect(bus);
+      const o1 = audio.createOscillator();
+      o1.type = wave;
+      o1.frequency.value = freq;
+      o1.detune.value = detuneVal;
+      const o2 = audio.createOscillator();
+      o2.type = wave;
+      o2.frequency.value = freq;
+      o2.detune.value = -detuneVal;
+      o1.connect(g);
+      o2.connect(g);
+      o1.start(now);
+      o2.start(now);
+      o1.stop(now + dur + 0.05);
+      o2.stop(now + dur + 0.05);
+      return { g, o1, o2 };
+    }
+
+    function releaseVoices() {
+      if (!audio) return;
+      const now = audio.currentTime;
+      heldVoices.forEach((v) => {
+        try {
+          v.g.gain.cancelScheduledValues(now);
+          v.g.gain.setValueAtTime(0.0001, now);
+          v.g.gain.linearRampToValueAtTime(0.0001, now + 0.12);
+        } catch (e) {}
+      });
+      heldVoices = [];
+    }
+
+    function lightKey(n, on) {
+      const el = keysWrap.querySelector('[data-n="' + n + '"]');
+      if (el) el.classList.toggle("on", on);
+    }
+
+    body.querySelectorAll(".wave").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        ripple(btn, e);
+        wave = btn.getAttribute("data-wave");
+        body.querySelectorAll(".wave").forEach((x) => x.classList.remove("active"));
+        btn.classList.add("active");
+        readout.textContent = "Waveform: " + wave;
+      });
+    });
+
+    keysWrap.addEventListener("pointerdown", (e) => {
+      const el = e.target.closest(".key");
+      if (!el) return;
+      e.preventDefault();
+      ensureAudio();
+      heldNote = el.getAttribute("data-n");
+      heldVoices.push(startNote(noteToFreq(heldNote), 1, true));
+      lightKey(heldNote, true);
+      readout.textContent = heldNote + " · " + noteToFreq(heldNote).toFixed(1) + " Hz";
+    });
+    keysWrap.addEventListener("pointermove", (e) => {
+      if (e.buttons === 0) return;
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      if (el && el.classList && el.classList.contains("key") && el.getAttribute("data-n") !== heldNote) {
+        releaseVoices();
+        lightKey(heldNote, false);
+        heldNote = el.getAttribute("data-n");
+        heldVoices.push(startNote(noteToFreq(heldNote), 1, true));
+        lightKey(heldNote, true);
+        readout.textContent = heldNote + " · " + noteToFreq(heldNote).toFixed(1) + " Hz";
+      }
+    });
+    window.addEventListener("pointerup", () => {
+      releaseVoices();
+      if (heldNote) lightKey(heldNote, false);
+      heldNote = null;
+    });
+
+    function playSeq(notes, tempo, name) {
+      ensureAudio();
+      const beat = 60 / tempo;
+      let t = 0;
+      notes.forEach(([n, beats]) => {
+        const dur = beats * beat * 0.92;
+        startNote(noteToFreq(n), dur, false);
+        setTimeout(() => lightKey(n, true), t * 1000);
+        setTimeout(() => lightKey(n, false), (t + dur) * 1000);
+        t += beats * beat;
+      });
+      readout.textContent = "Playing: " + name;
+    }
+
+    body.querySelectorAll(".mel").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        ripple(btn, e);
+        const m = melodies[Number(btn.getAttribute("data-mel"))];
+        if (m) playSeq(m.notes, m.tempo, m.name);
+      });
+    });
+    body.querySelector("[data-arp]").addEventListener("click", (e) => {
+      ripple(e.currentTarget, e);
+      playSeq([["C4", 1], ["E4", 1], ["G4", 1], ["C5", 1], ["G4", 1], ["E4", 1], ["C4", 1], ["E4", 1], ["G4", 1], ["C5", 1], ["G4", 1], ["C4", 1]], 140, "Arpeggio");
+    });
+
+    body.querySelector("[data-ctl=filter]").addEventListener("input", (e) => {
+      filterVal = +e.target.value;
+      if (filter && audio) filter.frequency.setTargetAtTime(filterVal, audio.currentTime, 0.02);
+      readout.textContent = "Filter: " + filterVal + " Hz";
+    });
+    body.querySelector("[data-ctl=detune]").addEventListener("input", (e) => {
+      detuneVal = +e.target.value;
+      readout.textContent = "Detune: " + (detuneVal > 0 ? "+" : "") + detuneVal + " cents";
+    });
+
+    function draw() {
+      requestAnimationFrame(draw);
+      // scope: grid + waveform
+      sctx.clearRect(0, 0, scope.width, scope.height);
+      sctx.strokeStyle = "rgba(20,22,30,0.08)";
+      sctx.lineWidth = 1;
+      for (let yy = 0; yy < scope.height; yy += 18) {
+        sctx.beginPath(); sctx.moveTo(0, yy); sctx.lineTo(scope.width, yy); sctx.stroke();
+      }
+      sctx.beginPath(); sctx.moveTo(scope.width / 2, 0); sctx.lineTo(scope.width / 2, scope.height); sctx.stroke();
+      let buf = null;
+      if (audio && analyser) {
+        buf = new Uint8Array(analyser.fftSize);
+        analyser.getByteTimeDomainData(buf);
+      }
+      sctx.strokeStyle = accent;
+      sctx.lineWidth = 2;
+      sctx.beginPath();
+      const n = buf ? buf.length : scope.width;
+      for (let i = 0; i < n; i++) {
+        const x = (i / n) * scope.width;
+        const y = buf ? (buf[i] / 255) * scope.height : scope.height / 2;
+        i === 0 ? sctx.moveTo(x, y) : sctx.lineTo(x, y);
+      }
+      sctx.stroke();
+      // spectrum
+      fctx.clearRect(0, 0, spec.width, spec.height);
+      if (audio && analyser) {
+        analyser.getByteFrequencyData(freqData);
+        const bars = 52;
+        const barW = spec.width / bars;
+        for (let k = 0; k < bars; k++) {
+          const v = freqData[k] / 255;
+          fctx.fillStyle = accent;
+          fctx.globalAlpha = 0.3 + v * 0.7;
+          fctx.fillRect(k * barW, spec.height - v * spec.height, barW - 2, v * spec.height);
+        }
+        fctx.globalAlpha = 1;
+      }
     }
     draw();
   };
