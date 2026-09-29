@@ -2,7 +2,7 @@
   "use strict";
 
   const featured = window.PROJECTS.filter((p) =>
-    ["folk-park", "mildred-pierce", "lumina", "hlabs", "laptop-deal", "arbolito"].includes(p.id)
+    ["hivemind", "checalo", "folk-park", "mildred-pierce", "lumina", "hlabs", "laptop-deal", "arbolito"].includes(p.id)
   );
   const small = window.PROJECTS.filter((p) => !featured.includes(p));
 
@@ -24,7 +24,7 @@
           ${p.demoUrl
             ? `<a href="${p.demoUrl}" target="_blank" rel="noopener">Live demo ↗</a>`
             : `<span style="color:var(--dim)">Live demo pending</span>`}
-          <a href="${p.repo}" target="_blank" rel="noopener">Source</a>
+          ${p.repo ? `<a href="${p.repo}" target="_blank" rel="noopener">Source</a>` : `<span style="color:var(--dim)">Private repo</span>`}
         </div>
       </div>
       <div class="demo" data-demo="${p.demo || "text"}" data-accent="${p.accent}">
@@ -44,7 +44,7 @@
       <p>${p.tagline}</p>
       <div class="meta">${p.stack.map((s) => `<span class="chip">${s}</span>`).join("")}</div>
       <div class="actions">
-        <a href="${p.repo}" target="_blank" rel="noopener">Source</a>
+        ${p.repo ? `<a href="${p.repo}" target="_blank" rel="noopener">Source</a>` : `<span style="color:var(--dim)">Private repo</span>`}
       </div>
     </div>
   `).join("");
@@ -1524,6 +1524,10 @@
     });
   };
 
+  demos.screenshot = (body, accent, p) => {
+    body.innerHTML = `<img src="${p.image}" alt="${p.imageAlt}" loading="lazy" style="width:100%;height:auto;display:block;border-radius:8px" />`;
+  };
+
   // Fallback for any project that has no interactive demo.
   demos.text = function (body, accent) {
     body.innerHTML = `<p class="desc" style="margin:0">Interactive demo not included for this project — open the source on GitHub.</p>`;
@@ -1535,6 +1539,8 @@
     const accent = el.getAttribute("data-accent") || "#8a8a96";
     const body = el.querySelector(".demo-body");
     const boot = demos[type];
-    if (boot) boot(body, accent);
+    const art = el.closest("article");
+    const proj = art ? window.PROJECTS.find((x) => x.id === art.id) : null;
+    if (boot) boot(body, accent, proj);
   });
 })();
