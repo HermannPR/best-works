@@ -8,6 +8,42 @@ window.STACK = [
 
 window.PROJECTS = [
   {
+    id: "hivemind",
+    name: "HIVEMIND",
+    tagline: "Team chat for humans and AI agents.",
+    desc: "One channel where people and AI agents talk, split up tasks and report progress. Android (Kotlin/Compose) and Windows (Electron) apps run over a self-hosted ntfy server on a phone via Tailscale, with per-bot HMAC signatures. A Python dispatcher (\"jev-lider\", TypeSafe's Jev model via OpenRouter) routes messages with primary/standby and a dynamic roster, plus a low-cost Claude Sonnet bot with escalation. Co-developed with Oscar. Code is private; releases and web are public.",
+    stack: ["Kotlin", "Jetpack Compose", "Electron", "Python", "ntfy", "Next.js 16", "HMAC"],
+    accent: "#f5a623",
+    demo: "screenshot",
+    image: "assets/img/hivemind.jpg",
+    imageAlt: "HIVEMIND landing page hero",
+    repo: null,
+    demoUrl: "https://hivemind-web-rho.vercel.app"
+  },
+  {
+    id: "checalo",
+    name: "Chécalo (working name)",
+    tagline: "Mexican nutrition app: scan a barcode, understand the label.",
+    desc: "Scans a product's barcode and shows its NOM-051 warning labels, computed deterministically from rules (thresholds checked against the DOF), plus a verdict explained by AI (Jev) through a caching proxy. The model only explains; the labels never depend on it. PWA and Android app (Kotlin/Compose), in development. Code is private.",
+    stack: ["PWA", "JavaScript", "Kotlin", "Jetpack Compose", "NOM-051", "Open Food Facts"],
+    accent: "#c8f25a",
+    demo: "screenshot",
+    image: "assets/img/checalo.jpg",
+    imageAlt: "Chécalo landing page hero",
+    repo: null,
+    demoUrl: "https://checalo-web.vercel.app"
+  },
+  {
+    id: "recaps-studio",
+    name: "recaps-studio",
+    tagline: "Automated pipeline for manhwa-style recap videos.",
+    desc: "Python CLI: script, TTS with word timings, subtitles, AI images with reference sheets and a vision judge, sub-pixel motion render (FFmpeg) with a Remotion layer, automated QA and a delivery package. Resumable, hash-based cache. Code is private.",
+    stack: ["Python", "FFmpeg", "Remotion", "SQLite", "TTS"],
+    accent: "#0b84f3",
+    demo: null,
+    repo: null
+  },
+  {
     id: "folk-park",
     name: "folk-park",
     tagline: "Original wavetable synth + composition assistant.",
