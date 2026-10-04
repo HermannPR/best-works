@@ -1,16 +1,26 @@
-# Best Works — Hermann
+# Best Works
 
-The project index I'd point a hiring team to. This repo is now a small static
-site that runs entirely in the browser — no backend, no API keys, no sign-up.
-Every demo is self-contained with hardcoded data, so it keeps working even when
-the production deployments are down.
+Página estática con un índice de mis mejores proyectos, con enlaces, stack y demos. Está pensada para que alguien que revise mi trabajo vea rápido de qué trata cada proyecto.
 
-## See it
+Corre completa en el navegador. No usa backend ni llaves de API, y los datos de las demos están escritos directo en el código, así que sigue funcionando aunque los sitios en producción estén caídos. La página está en inglés.
 
-GitHub Pages (branch `main`, folder `/`):
-`https://hermannpr.github.io/best-works/`
+Sitio: https://hermannpr.github.io/best-works/
 
-## Run locally
+![Vista de escritorio](docs/capturas/escritorio.jpg)
+
+![Vista móvil](docs/capturas/movil.jpg)
+
+## Qué incluye
+
+- Presentación corta y lista de tecnologías
+- Proyectos seleccionados con descripción, stack y capturas
+- Demos interactivas que funcionan sin conexión a un servidor
+
+## Tecnologías
+
+HTML, CSS y JavaScript sin frameworks.
+
+## Cómo correrlo en local
 
 ```bash
 git clone https://github.com/HermannPR/best-works
@@ -18,16 +28,11 @@ cd best-works
 python3 -m http.server 5173
 ```
 
-Then open http://localhost:5173/.
+Después abre http://localhost:5173/ en el navegador.
 
-## What's in here
+## Estructura
 
-- `index.html` — the page
-- `assets/styles.css` — styling
-- `assets/data.js` — the showcase data (projects, stacks, mock demo data)
-- `assets/app.js` — rendering + the interactive browser demos
-
-## Notes
-
-This is intentionally framework-free: one HTML file, a couple of assets. It can
-be deployed anywhere static (GitHub Pages, Vercel, Netlify) with zero config.
+- `index.html` es la página
+- `assets/styles.css` tiene los estilos
+- `assets/data.js` tiene los datos de los proyectos y de las demos
+- `assets/app.js` pinta la página y maneja las demos
