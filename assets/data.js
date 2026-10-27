@@ -126,26 +126,26 @@ window.PROJECTS = [
     demoUrl: "https://mildred-pierce.vercel.app",
   },
   {
-    id: "folk-park",
+    id: "angelcore",
     featured: true,
-    name: "folk-park",
+    name: "ANGELCORE",
     tagline: {
-      es: "Sintetizador wavetable propio con asistente de composición.",
-      en: "Original wavetable synth with a composition assistant.",
+      es: "Instrumento y efecto de audio (AU/VST3) con generadores de MIDI.",
+      en: "Audio instrument and effect (AU/VST3) with MIDI generators.",
     },
     desc: {
-      es: "Sintetizador en tiempo real en C++20 con JUCE 8, como VST3 y standalone. Dos osciladores con modulación wavetable, efectos, presets e interfaz en React dentro de un WebView, más un asistente de composición determinista que propone ideas musicales sin quitarte el control. Pruébalo aquí: el demo de la derecha es una versión web.",
-      en: "A real-time synth in C++20 with JUCE 8, shipping as VST3 and standalone. Two oscillators with wavetable modulation, effects, presets and a React UI inside a WebView, plus a deterministic composition assistant that suggests musical ideas without taking control away. Try it here: the demo on the right is a web version.",
+      es: "Dos plugins para producir música, en C++20 con JUCE: Plegaria, un sintetizador con presets y controles de sonido, y Respuesta, un efecto. Debajo hay un núcleo propio sin JUCE con síntesis, teoría musical y generadores de MIDI deterministas, que dan los mismos bytes en cada corrida. El hilo de audio no reserva memoria ni usa locks, y el compilador lo hace cumplir. Es la evolución de folk-park, mi primer sintetizador. Pruébalo aquí: el demo de la derecha es una versión web.",
+      en: "Two music-production plugins in C++20 with JUCE: Plegaria, a synth with presets and sound controls, and Respuesta, an effect. Underneath is my own JUCE-free core with synthesis, music theory and deterministic MIDI generators that produce the same bytes on every run. The audio thread never allocates or locks, and the compiler enforces it. It grew out of folk-park, my first synth. Try it here: the demo on the right is a web version.",
     },
     highlights: {
-      es: ["16/16 suites de pruebas y 19/19 contratos de UI", "Validado con pluginval strictness 5"],
-      en: ["16/16 test suites and 19/19 UI contracts", "Validated with pluginval strictness 5"],
+      es: ["Reglas de tiempo real comprobadas al compilar", "Pruebas con RealtimeSanitizer y ThreadSanitizer", "Generadores de MIDI verificados con archivos golden"],
+      en: ["Real-time rules enforced at compile time", "Tested with RealtimeSanitizer and ThreadSanitizer", "MIDI generators checked against golden files"],
     },
-    stack: ["C++20", "JUCE 8", "VST3", "React", "CMake", "DSP"],
+    stack: ["C++20", "JUCE", "AU", "VST3", "CMake", "DSP", "MIDI"],
     accent: "#9d8bc2",
     demo: "synth",
     noDemo: { es: "Sin binario público", en: "No public binary" },
-    repo: "https://github.com/HermannPR/folk-park",
+    repo: "https://github.com/HermannPR/angelcore-nucleo",
     demoUrl: null,
   },
   {
@@ -365,7 +365,7 @@ window.MOCK = {
     { name: { es: "Rompecabezas 500 pzas", en: "Puzzle 500pc" }, price: 189, swatch: "#9d8bc2" },
     { name: { es: "Set de muñecas", en: "Doll Set" }, price: 419, swatch: "#c5a03a" }
   ],
-  // Iconic (public-domain) melody presets for the folk-park synth demo.
+  // Iconic (public-domain) melody presets for the ANGELCORE synth demo.
   // notes: [ [note, beats], ... ]. Replace with your own melodies here.
   synthMelodies: [
     { name: "Ode to Joy", tempo: 112, notes: [
