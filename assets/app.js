@@ -1,9 +1,12 @@
 (function () {
   "use strict";
 
-  const featured = window.PROJECTS.filter((p) =>
-    ["hivemind", "checalo", "folk-park", "mildred-pierce", "lumina", "hlabs", "laptop-deal", "arbolito"].includes(p.id)
-  );
+  // Language comes from <html lang>: "/" is Spanish, "/en/" is English.
+  const LANG = (document.documentElement.lang || "es").slice(0, 2) === "en" ? "en" : "es";
+  const T = (es, en) => (LANG === "en" ? en : es);
+  const tx = (v) => (v && typeof v === "object" && !Array.isArray(v) ? (v[LANG] ?? v.es) : v);
+
+  const featured = window.PROJECTS.filter((p) => p.featured);
   const small = window.PROJECTS.filter((p) => !featured.includes(p));
 
   // ----- Header stack badges -----
@@ -15,16 +18,17 @@
   featuredEl.innerHTML = featured.map((p) => `
     <article class="feature" id="${p.id}">
       <div class="info">
-        <h3>${p.name}</h3>
-        <p class="tagline">${p.tagline}</p>
-        <p class="desc">${p.desc}</p>
+        <h3>${p.name}${p.badge ? ` <span class="award">${tx(p.badge)}</span>` : ""}</h3>
+        <p class="tagline">${tx(p.tagline)}</p>
+        <p class="desc">${tx(p.desc)}</p>
+        ${p.highlights ? `<ul class="highlights">${tx(p.highlights).map((h) => `<li>${h}</li>`).join("")}</ul>` : ""}
         <div class="meta">${p.stack.map((s) => `<span class="chip">${s}</span>`).join("")}</div>
         <div class="actions">
           ${p.demoUrl ? `<span class="demo-dot" style="background:${p.accent}"></span>` : ""}
           ${p.demoUrl
-            ? `<a href="${p.demoUrl}" target="_blank" rel="noopener">Live demo ↗</a>`
-            : `<span style="color:var(--dim)">Live demo pending</span>`}
-          ${p.repo ? `<a href="${p.repo}" target="_blank" rel="noopener">Source</a>` : `<span style="color:var(--dim)">Private repo</span>`}
+            ? `<a href="${p.demoUrl}" target="_blank" rel="noopener">${T("Ver en vivo ↗", "Live demo ↗")}</a>`
+            : `<span style="color:var(--dim)">${tx(p.noDemo) || T("Sin demo web", "No web demo")}</span>`}
+          ${p.repo ? `<a href="${p.repo}" target="_blank" rel="noopener">${T("Código", "Source")}</a>` : `<span style="color:var(--dim)">${T("Código privado", "Private repo")}</span>`}
         </div>
       </div>
       <div class="demo" data-demo="${p.demo || "text"}" data-accent="${p.accent}">
@@ -40,11 +44,12 @@
   // ----- Render smaller grid -----
   document.getElementById("grid").innerHTML = small.map((p) => `
     <div class="card">
-      <h4>${p.name}</h4>
-      <p>${p.tagline}</p>
+      <h4>${p.name}${p.badge ? ` <span class="award">${tx(p.badge)}</span>` : ""}</h4>
+      <p>${tx(p.tagline)}</p>
       <div class="meta">${p.stack.map((s) => `<span class="chip">${s}</span>`).join("")}</div>
       <div class="actions">
-        ${p.repo ? `<a href="${p.repo}" target="_blank" rel="noopener">Source</a>` : `<span style="color:var(--dim)">Private repo</span>`}
+        ${p.demoUrl ? `<a href="${p.demoUrl}" target="_blank" rel="noopener">${T("Ver en vivo ↗", "Live demo ↗")}</a>` : ""}
+        ${p.repo ? `<a href="${p.repo}" target="_blank" rel="noopener">${T("Código", "Source")}</a>` : `<span style="color:var(--dim)">${T("Código privado", "Private repo")}</span>`}
       </div>
     </div>
   `).join("");
@@ -100,13 +105,13 @@
     body.innerHTML = `
       <canvas width="480" height="160"></canvas>
       <div class="controls">
-        <button class="btn" data-wave="sawtooth">Saw</button>
-        <button class="btn" data-wave="square">Square</button>
-        <button class="btn" data-wave="sine">Sine</button>
-        <button class="btn" data-wave="triangle">Triangle</button>
-        <button class="btn primary" data-play>Play arpeggio</button>
+        <button class="btn" data-wave="sawtooth">${T("Sierra", "Saw")}</button>
+        <button class="btn" data-wave="square">${T("Cuadrada", "Square")}</button>
+        <button class="btn" data-wave="sine">${T("Seno", "Sine")}</button>
+        <button class="btn" data-wave="triangle">${T("Triángulo", "Triangle")}</button>
+        <button class="btn primary" data-play>${T("Tocar arpegio", "Play arpeggio")}</button>
       </div>
-      <div class="readout">Ready. Pick a waveform and press play.</div>`;
+      <div class="readout">${T("Listo. Elige una onda y dale play.", "Ready. Pick a waveform and press play.")}</div>`;
 
     const canvas = body.querySelector("canvas");
     const ctx = canvas.getContext("2d");
@@ -149,7 +154,7 @@
       const freqs = [261.63, 329.63, 392.0, 523.25, 392.0, 329.63];
       const step = 0.22;
       freqs.forEach((f, i) => note(f, i * step, step * 0.9));
-      readout.textContent = "Playing: " + freqs.map((f) => f.toFixed(1) + " Hz").join(" · ");
+      readout.textContent = T("Sonando: ", "Playing: ") + freqs.map((f) => f.toFixed(1) + " Hz").join(" · ");
       playing = true;
     }
 
@@ -158,7 +163,7 @@
         wave = b.getAttribute("data-wave");
         body.querySelectorAll("[data-wave]").forEach((x) => x.classList.remove("primary"));
         b.classList.add("primary");
-        readout.textContent = "Waveform: " + wave;
+        readout.textContent = T("Onda: ", "Waveform: ") + wave;
       });
     });
     body.querySelector("[data-play]").addEventListener("click", arp);
@@ -222,13 +227,13 @@
         </div>
         <div class="melodies">
           ${melodies.map((m, i) => `<button class="pbtn mel" data-mel="${i}">${m.name}</button>`).join("")}
-          <button class="pbtn primary" data-arp>Arpeggio</button>
+          <button class="pbtn primary" data-arp>${T("Arpegio", "Arpeggio")}</button>
         </div>
         <div class="knobs">
-          <label>Filter <input type="range" min="300" max="6000" value="6000" step="50" data-ctl="filter"></label>
-          <label>Detune <input type="range" min="-40" max="40" value="0" step="2" data-ctl="detune"></label>
+          <label>${T("Filtro", "Filter")} <input type="range" min="300" max="6000" value="6000" step="50" data-ctl="filter"></label>
+          <label>${T("Desafinar", "Detune")} <input type="range" min="-40" max="40" value="0" step="2" data-ctl="detune"></label>
         </div>
-        <div class="readout">Pick a waveform, tap a key, or play a melody.</div>
+        <div class="readout">${T("Elige una onda, toca una tecla o una melodía.", "Pick a waveform, tap a key, or play a melody.")}</div>
       </div>`;
 
     body.querySelectorAll(".wave").forEach((btn) => {
@@ -320,7 +325,7 @@
         wave = btn.getAttribute("data-wave");
         body.querySelectorAll(".wave").forEach((x) => x.classList.remove("active"));
         btn.classList.add("active");
-        readout.textContent = "Waveform: " + wave;
+        readout.textContent = T("Onda: ", "Waveform: ") + wave;
       });
     });
 
@@ -363,7 +368,7 @@
         setTimeout(() => lightKey(n, false), (t + dur) * 1000);
         t += beats * beat;
       });
-      readout.textContent = "Playing: " + name;
+      readout.textContent = T("Sonando: ", "Playing: ") + name;
     }
 
     body.querySelectorAll(".mel").forEach((btn) => {
@@ -375,17 +380,17 @@
     });
     body.querySelector("[data-arp]").addEventListener("click", (e) => {
       ripple(e.currentTarget, e);
-      playSeq([["C4", 1], ["E4", 1], ["G4", 1], ["C5", 1], ["G4", 1], ["E4", 1], ["C4", 1], ["E4", 1], ["G4", 1], ["C5", 1], ["G4", 1], ["C4", 1]], 140, "Arpeggio");
+      playSeq([["C4", 1], ["E4", 1], ["G4", 1], ["C5", 1], ["G4", 1], ["E4", 1], ["C4", 1], ["E4", 1], ["G4", 1], ["C5", 1], ["G4", 1], ["C4", 1]], 140, T("Arpegio", "Arpeggio"));
     });
 
     body.querySelector("[data-ctl=filter]").addEventListener("input", (e) => {
       filterVal = +e.target.value;
       if (filter && audio) filter.frequency.setTargetAtTime(filterVal, audio.currentTime, 0.02);
-      readout.textContent = "Filter: " + filterVal + " Hz";
+      readout.textContent = T("Filtro: ", "Filter: ") + filterVal + " Hz";
     });
     body.querySelector("[data-ctl=detune]").addEventListener("input", (e) => {
       detuneVal = +e.target.value;
-      readout.textContent = "Detune: " + (detuneVal > 0 ? "+" : "") + detuneVal + " cents";
+      readout.textContent = "Detune: " + (detuneVal > 0 ? "+" : "") + detuneVal + T(" cents", " cents");
     });
 
     function draw() {
@@ -434,6 +439,7 @@
   // 1c. folk-park (v2 — minimal, fast to grasp) — keyboard + one play button.
   demos.synth = function (body, accent) {
     const WAVES = ["sawtooth", "sine", "square"];
+    const WAVE_NAMES = { sawtooth: T("Sierra", "Sawtooth"), sine: T("Seno", "Sine"), square: T("Cuadrada", "Square") };
     const WHITE = ["C4", "D4", "E4", "F4", "G4", "A4", "B4"];
     const BLACK_POS = { "C#4": 1, "D#4": 2, "F#4": 4, "G#4": 5, "A#4": 6 };
     const melodies = window.MOCK.synthMelodies || [];
@@ -445,12 +451,12 @@
         <canvas class="scope" width="440" height="96"></canvas>
         <div class="keys"></div>
         <div class="row">
-          <div class="waves" role="group" aria-label="Waveform">
-            ${WAVES.map((w, i) => `<button class="pbtn chip ${i === 0 ? "active" : ""}" data-wave="${w}">${w[0].toUpperCase() + w.slice(1)}</button>`).join("")}
+          <div class="waves" role="group" aria-label="${T("Forma de onda", "Waveform")}">
+            ${WAVES.map((w, i) => `<button class="pbtn chip ${i === 0 ? "active" : ""}" data-wave="${w}">${WAVE_NAMES[w]}</button>`).join("")}
           </div>
-          <button class="pbtn primary" data-tune>▶ Play a tune</button>
+          <button class="pbtn primary" data-tune>▶ ${T("Tocar melodía", "Play a tune")}</button>
         </div>
-        <div class="readout">Tap the keys or hit play.</div>
+        <div class="readout">${T("Toca las teclas o dale play.", "Tap the keys or hit play.")}</div>
       </div>`;
 
     const keysWrap = body.querySelector(".keys");
@@ -600,6 +606,7 @@
   // 1d. folk-park (v3 — vertical keyboard + notes-in-time roller).
   demos.synth = function (body, accent) {
     const WAVES = ["sawtooth", "sine", "square"];
+    const WAVE_NAMES = { sawtooth: T("Sierra", "Sawtooth"), sine: T("Seno", "Sine"), square: T("Cuadrada", "Square") };
     const KEYS = ["C4", "C#4", "D4", "D#4", "E4", "F4", "F#4", "G4", "G#4", "A4", "A#4", "B4"];
     const BLACK = new Set(["C#4", "D#4", "F#4", "G#4", "A#4"]);
     const melodies = window.MOCK.synthMelodies || [];
@@ -615,12 +622,12 @@
           </div>
         </div>
         <div class="row">
-          <div class="waves" role="group" aria-label="Waveform">
-            ${WAVES.map((w, i) => `<button class="pbtn chip ${i === 0 ? "active" : ""}" data-wave="${w}">${w[0].toUpperCase() + w.slice(1)}</button>`).join("")}
+          <div class="waves" role="group" aria-label="${T("Forma de onda", "Waveform")}">
+            ${WAVES.map((w, i) => `<button class="pbtn chip ${i === 0 ? "active" : ""}" data-wave="${w}">${WAVE_NAMES[w]}</button>`).join("")}
           </div>
-          <button class="pbtn primary" data-tune>▶ Play a tune</button>
+          <button class="pbtn primary" data-tune>▶ ${T("Tocar melodía", "Play a tune")}</button>
         </div>
-        <div class="readout">Tap the keys or hit play.</div>
+        <div class="readout">${T("Toca las teclas o dale play.", "Tap the keys or hit play.")}</div>
       </div>`;
 
     const keysWrap = body.querySelector(".vkeys");
@@ -797,6 +804,7 @@
   // 1e. folk-park (v4 — clean horizontal piano + oscilloscope screen).
   demos.synth = function (body, accent) {
     const WAVES = ["sawtooth", "sine", "square"];
+    const WAVE_NAMES = { sawtooth: T("Sierra", "Sawtooth"), sine: T("Seno", "Sine"), square: T("Cuadrada", "Square") };
     const WHITE = ["C4", "D4", "E4", "F4", "G4", "A4", "B4"];
     const BLACKS = [["C#4", 0], ["D#4", 1], ["F#4", 3], ["G#4", 4], ["A#4", 5]];
     const melodies = window.MOCK.synthMelodies || [];
@@ -808,12 +816,12 @@
         <div class="screen"><canvas class="scope" width="440" height="104"></canvas></div>
         <div class="piano"></div>
         <div class="row">
-          <div class="waves" role="group" aria-label="Waveform">
-            ${WAVES.map((w, i) => `<button class="pbtn chip ${i === 0 ? "active" : ""}" data-wave="${w}">${w[0].toUpperCase() + w.slice(1)}</button>`).join("")}
+          <div class="waves" role="group" aria-label="${T("Forma de onda", "Waveform")}">
+            ${WAVES.map((w, i) => `<button class="pbtn chip ${i === 0 ? "active" : ""}" data-wave="${w}">${WAVE_NAMES[w]}</button>`).join("")}
           </div>
-          <button class="pbtn primary" data-tune>▶ Play a tune</button>
+          <button class="pbtn primary" data-tune>▶ ${T("Tocar melodía", "Play a tune")}</button>
         </div>
-        <div class="readout">Tap the piano or hit play.</div>
+        <div class="readout">${T("Toca el piano o dale play.", "Tap the piano or hit play.")}</div>
       </div>`;
 
     const piano = body.querySelector(".piano");
@@ -962,8 +970,8 @@
     body.innerHTML = `
       <canvas width="480" height="220"></canvas>
       <div class="controls">
-        <button class="btn" data-prev>◄ Prev</button>
-        <button class="btn" data-next>Next ►</button>
+        <button class="btn" data-prev>◄ ${T("Anterior", "Prev")}</button>
+        <button class="btn" data-next>${T("Siguiente", "Next")} ►</button>
       </div>
       <div class="readout">CH 01 · static</div>`;
     const canvas = body.querySelector("canvas");
@@ -1052,7 +1060,7 @@
       <div class="band premium-demo" style="--accent:${accent}">
         <div class="band-head">
           <span class="band-kicker">MILDRED PIERCE</span>
-          <span class="band-single">FRACTAL AGREEMENT — out now</span>
+          <span class="band-single">FRACTAL AGREEMENT — ${T("ya disponible", "out now")}</span>
         </div>
         <div class="band-mid">
           <canvas class="band-disc" width="96" height="96"></canvas>
@@ -1062,17 +1070,17 @@
           ${LINKS.map((l) => `<a class="pbtn plat" href="${l.url}" target="_blank" rel="noopener">${l.label} <span>↗</span></a>`).join("")}
         </div>
         <div class="tv-row">
-          <button class="pbtn chip tv" data-tv>📺 Channel surf</button>
+          <button class="pbtn chip tv" data-tv>📺 ${T("Cambiar canales", "Channel surf")}</button>
         </div>
         <div class="tvroom" hidden>
           <canvas width="440" height="150"></canvas>
           <div class="tv-ctrl">
-            <button class="pbtn chip" data-prev>◄ Prev</button>
-            <button class="pbtn chip" data-next>Next ►</button>
+            <button class="pbtn chip" data-prev>◄ ${T("Anterior", "Prev")}</button>
+            <button class="pbtn chip" data-next>${T("Siguiente", "Next")} ►</button>
           </div>
           <div class="readout">CH 01</div>
         </div>
-        <div class="readout">Debut single. The TV is a secret.</div>
+        <div class="readout">${T("Sencillo debut. La tele es un secreto.", "Debut single. The TV is a secret.")}</div>
       </div>`;
 
     const disc = body.querySelector(".band-disc");
@@ -1185,20 +1193,20 @@
       <div class="band premium-demo" style="--accent:${accent}">
         <div class="band-head">
           <span class="band-kicker">MILDRED PIERCE</span>
-          <span class="band-single">FRACTAL AGREEMENT — out now</span>
+          <span class="band-single">FRACTAL AGREEMENT — ${T("ya disponible", "out now")}</span>
         </div>
         <div class="tvrow">
-          <button class="pbtn chip tvbtn" data-prev aria-label="Previous channel">◄</button>
+          <button class="pbtn chip tvbtn" data-prev aria-label="${T("Canal anterior", "Previous channel")}">◄</button>
           <div class="tv">
             <div class="tv-screen"></div>
           </div>
-          <button class="pbtn chip tvbtn" data-next aria-label="Next channel">►</button>
+          <button class="pbtn chip tvbtn" data-next aria-label="${T("Canal siguiente", "Next channel")}">►</button>
         </div>
         <div class="tv-info"></div>
         <div class="platforms">
           ${LINKS.map((l) => `<a class="pbtn plat" href="${l.url}" target="_blank" rel="noopener">${l.label} <span>↗</span></a>`).join("")}
         </div>
-        <div class="readout">Spin the dial: song, minigames, visuals.</div>
+        <div class="readout">${T("Gira la perilla: canción, minijuegos y visuales.", "Spin the dial: song, minigames, visuals.")}</div>
       </div>`;
 
     const screen = body.querySelector(".tv-screen");
@@ -1320,7 +1328,7 @@
         ctx.fillStyle = "#e9e9ee";
         ctx.fillRect(p.x, p.y, p.w, p.h);
         ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.font = "bold 16px monospace";
-        ctx.fillText(cleared ? "CLEAR!" : "Reach the block ▸", 14, 26);
+        ctx.fillText(cleared ? T("¡LISTO!", "CLEAR!") : T("Llega al bloque ▸", "Reach the block ▸"), 14, 26);
       };
       loop();
       return () => { cancelAnimationFrame(raf); window.removeEventListener("keydown", onKeyDown); window.removeEventListener("keyup", onKeyUp); };
@@ -1351,7 +1359,7 @@
         ctx.fillStyle = "#e9e9ee";
         ctx.fillRect(px - padW / 2, H - 20, padW, 12);
         ctx.fillStyle = "rgba(255,255,255,0.7)"; ctx.font = "bold 16px monospace";
-        ctx.fillText("Catch: " + score, 14, 26);
+        ctx.fillText(T("Atrapadas: ", "Catch: ") + score, 14, 26);
       };
       loop();
       return () => cancelAnimationFrame(raf);
@@ -1375,7 +1383,7 @@
   demos.reservations = function (body, accent) {
     const seats = window.MOCK.seats;
     body.innerHTML = `
-      <div class="readout" style="margin-top:0">Seats: <span data-count>0</span> booked · <span data-free>0</span> free</div>
+      <div class="readout" style="margin-top:0">${T("Lugares", "Seats")}: <span data-count>0</span> ${T("reservados", "booked")} · <span data-free>0</span> ${T("libres", "free")}</div>
       <div class="seats" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px"></div>`;
     const grid = body.querySelector(".seats");
     const count = body.querySelector("[data-count]");
@@ -1388,7 +1396,7 @@
     seats.forEach((s) => {
       const el = document.createElement("div");
       el.style.cssText = "aspect-ratio:1;border-radius:8px;background:#17171d;border:1px solid #2c2c34;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;color:#9a9aa6;transition:0.15s";
-      el.textContent = s.zones[0] + (s.id % 10);
+      el.textContent = s.zones[Math.floor(s.id / 10)] + (s.id % 10 + 1);
       el.addEventListener("click", () => {
         s.booked = !s.booked;
         el.style.background = s.booked ? accent : "#17171d";
@@ -1406,23 +1414,23 @@
   demos.quiz = function (body, accent) {
     const q = window.MOCK.quiz;
     body.innerHTML = `
-      <p class="desc" style="margin:0">${q.q}</p>
+      <p class="desc" style="margin:0">${tx(q.q)}</p>
       <div class="controls" data-options></div>
-      <div class="readout" data-result>Pick one to see your archetype.</div>`;
+      <div class="readout" data-result>${T("Elige una para ver tu arquetipo.", "Pick one to see your archetype.")}</div>`;
     const opt = body.querySelector("[data-options]");
     const res = body.querySelector("[data-result]");
     const map = [
-      ["The Bull", "creatine · beta-alanine · caffeine"],
-      ["The Owl", "caffeine · L-theanine · citrulline"],
-      ["The Ghost", "citrulline · beta-alanine · no caffeine"],
-      ["The Sage", "adaptogens · electrolytes · L-theanine"]
+      [T("El Toro", "The Bull"), T("creatina · beta-alanina · cafeína", "creatine · beta-alanine · caffeine")],
+      [T("El Búho", "The Owl"), T("cafeína · L-teanina · citrulina", "caffeine · L-theanine · citrulline")],
+      [T("El Fantasma", "The Ghost"), T("citrulina · beta-alanina · sin cafeína", "citrulline · beta-alanine · no caffeine")],
+      [T("El Sabio", "The Sage"), T("adaptógenos · electrolitos · L-teanina", "adaptogens · electrolytes · L-theanine")]
     ];
     q.options.forEach((o, i) => {
       const b = document.createElement("button");
       b.className = "btn";
-      b.textContent = o;
+      b.textContent = tx(o);
       b.addEventListener("click", () => {
-        res.textContent = "Archetype: " + map[i][0] + " → " + map[i][1];
+        res.textContent = T("Arquetipo: ", "Archetype: ") + map[i][0] + " → " + map[i][1];
         opt.querySelectorAll(".btn").forEach((x) => x.classList.remove("primary"));
         b.classList.add("primary");
       });
@@ -1435,12 +1443,12 @@
     body.innerHTML = `
       <canvas width="480" height="200"></canvas>
       <div class="controls" data-filters>
-        <button class="btn primary" data-store="all">All</button>
+        <button class="btn primary" data-store="all">${T("Todas", "All")}</button>
         <button class="btn" data-store="Amazon MX">Amazon</button>
         <button class="btn" data-store="MercadoLibre">MercadoLibre</button>
         <button class="btn" data-store="Best Buy">Best Buy</button>
       </div>
-      <div class="readout" data-out>Showing all retailers</div>`;
+      <div class="readout" data-out>${T("Mostrando todas las tiendas", "Showing all retailers")}</div>`;
     const canvas = body.querySelector("canvas");
     const ctx = canvas.getContext("2d");
     const out = body.querySelector("[data-out]");
@@ -1483,7 +1491,7 @@
           ctx.fill();
         });
       });
-      out.textContent = "Showing " + (store === "all" ? "all retailers" : store);
+      out.textContent = T("Mostrando ", "Showing ") + (store === "all" ? T("todas las tiendas", "all retailers") : store);
     }
     body.querySelectorAll("[data-store]").forEach((b) => {
       b.addEventListener("click", () => {
@@ -1501,23 +1509,23 @@
     const products = window.MOCK.products;
     let cart = [];
     body.innerHTML = `
-      <div class="readout" style="margin-top:0">Cart: 0 items · $0</div>
+      <div class="readout" style="margin-top:0">${T("Carrito: 0 artículos · $0", "Cart: 0 items · $0")}</div>
       <div class="store-products" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px"></div>`;
     const grid = body.querySelector(".store-products");
     const out = body.querySelector(".readout");
     function total() {
       const n = cart.reduce((s, p) => s + p.price, 0);
-      out.textContent = "Cart: " + cart.length + " items · $" + n.toLocaleString();
+      out.textContent = T("Carrito: ", "Cart: ") + cart.length + T(" artículos · $", " items · $") + n.toLocaleString();
       cart = [];
     }
     products.forEach((p) => {
       const el = document.createElement("div");
       el.style.cssText = "border:1px solid #2c2c34;border-radius:10px;padding:12px;text-align:center;background:#101014";
-      el.innerHTML = '<div style="width:32px;height:32px;margin:0 auto;border-radius:8px;background:' + p.swatch + '"></div><div style="font-size:13px;margin-top:8px">' + p.name + '</div><div style="font-size:12px;color:#9a9aa6">$' + p.price + '</div>';
+      el.innerHTML = '<div style="width:32px;height:32px;margin:0 auto;border-radius:8px;background:' + p.swatch + '"></div><div style="font-size:13px;margin-top:8px">' + tx(p.name) + '</div><div style="font-size:12px;color:#9a9aa6">$' + p.price + '</div>';
       const btn = document.createElement("button");
       btn.className = "btn";
       btn.style.marginTop = "8px";
-      btn.textContent = "Add";
+      btn.textContent = T("Agregar", "Add");
       btn.addEventListener("click", () => { cart.push(p); total(); });
       el.appendChild(btn);
       grid.appendChild(el);
@@ -1525,12 +1533,12 @@
   };
 
   demos.screenshot = (body, accent, p) => {
-    body.innerHTML = `<img src="${p.image}" alt="${p.imageAlt}" loading="lazy" style="width:100%;height:auto;display:block;border-radius:8px" />`;
+    body.innerHTML = `<img src="${LANG === "en" ? "../" : ""}${p.image}" alt="${tx(p.imageAlt)}" loading="lazy" style="width:100%;height:auto;display:block;border-radius:8px" />`;
   };
 
   // Fallback for any project that has no interactive demo.
   demos.text = function (body, accent) {
-    body.innerHTML = `<p class="desc" style="margin:0">Interactive demo not included for this project — open the source on GitHub.</p>`;
+    body.innerHTML = `<p class="desc" style="margin:0">${T("Este proyecto no trae demo interactiva aquí; abre su liga o su código.", "No interactive demo here for this project — open its link or source.")}</p>`;
   };
 
   // ----- Boot each demo (now that the registry is full) -----
