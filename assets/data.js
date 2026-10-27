@@ -1,174 +1,314 @@
-// Static, hardcoded showcase data. No backend, no fetch — everything below is
+// Static, hardcoded showcase data, in Spanish and English. No backend, no fetch — everything below is
 // just JSON so the page works from a plain static file or GitHub Pages.
 
 window.STACK = [
-  "TypeScript", "React", "Next.js", "Node.js", "Python",
-  "Three.js", "Tailwind CSS", "C++", "C", "DSP / Audio", "PostgreSQL", "Supabase",
+  "TypeScript", "React", "Next.js", "Node.js", "Python", "Kotlin",
+  "C++ / JUCE", "C", "Swift", "PostgreSQL", "Supabase", "Three.js", "TensorFlow", "FFmpeg",
 ];
 
+// Text fields are { es, en }; app.js picks the one matching <html lang>.
+// featured: true puts a project in the big section with its live demo.
 window.PROJECTS = [
   {
     id: "hivemind",
+    featured: true,
     name: "HIVEMIND",
-    tagline: "Team chat for humans and AI agents.",
-    desc: "One channel where people and AI agents talk, split up tasks and report progress. Android (Kotlin/Compose) and Windows (Electron) apps run over a self-hosted ntfy server on a phone via Tailscale, with per-bot HMAC signatures. A Python dispatcher (\"jev-lider\", TypeSafe's Jev model via OpenRouter) routes messages with primary/standby and a dynamic roster, plus a low-cost Claude Sonnet bot with escalation. Co-developed with Oscar. Code is private; releases and web are public.",
-    stack: ["Kotlin", "Jetpack Compose", "Electron", "Python", "ntfy", "Next.js 16", "HMAC"],
+    tagline: {
+      es: "Chat de equipo para personas y agentes de IA.",
+      en: "Team chat for humans and AI agents.",
+    },
+    desc: {
+      es: "Un solo canal donde personas y agentes de IA conversan, se reparten tareas y reportan avances. Apps para Android (Kotlin/Compose) y Windows (Electron), más una versión Lite en Rust, sobre un servidor ntfy propio con firmas HMAC-SHA256 por bot. Un despachador en Python enruta mensajes con titular y suplente. Lo uso a diario para coordinar mis propios agentes.",
+      en: "One channel where people and AI agents talk, split up tasks and report progress. Android (Kotlin/Compose) and Windows (Electron) apps, plus a Lite build in Rust, over a self-hosted ntfy server with per-bot HMAC-SHA256 signatures. A Python dispatcher routes messages with primary and standby bots. I use it every day to coordinate my own agents.",
+    },
+    highlights: {
+      es: ["398 pruebas automatizadas (148 Windows, 250 Android)", "Carga de historial de 2.5 s a 20 ms por evento con 20,000 mensajes", "Auditoría de seguridad propia: 3 fallas críticas encontradas y corregidas"],
+      en: ["398 automated tests (148 Windows, 250 Android)", "History load cut from 2.5 s to 20 ms per event with 20,000 messages", "My own security audit: 3 critical flaws found and fixed"],
+    },
+    stack: ["Kotlin", "Jetpack Compose", "Electron", "Rust", "Python", "ntfy", "HMAC-SHA256"],
     accent: "#f5a623",
     demo: "screenshot",
     image: "assets/img/hivemind.jpg",
-    imageAlt: "HIVEMIND landing page hero",
-    repo: null,
-    demoUrl: "https://hivemind-web-rho.vercel.app"
+    imageAlt: { es: "Portada del sitio de HIVEMIND", en: "HIVEMIND landing page hero" },
+    repo: "https://github.com/HermannPR/hivemind-chat-releases",
+    demoUrl: "https://hivemind-web-rho.vercel.app",
   },
   {
     id: "checalo",
-    name: "Chécalo (working name)",
-    tagline: "Mexican nutrition app: scan a barcode, understand the label.",
-    desc: "Scans a product's barcode and shows its NOM-051 warning labels, computed deterministically from rules (thresholds checked against the DOF), plus a verdict explained by AI (Jev) through a caching proxy. The model only explains; the labels never depend on it. PWA and Android app (Kotlin/Compose), in development. Code is private.",
+    featured: true,
+    name: "Chécalo",
+    tagline: {
+      es: "App de nutrición: escaneas el código de barras y entiendes la etiqueta.",
+      en: "Nutrition app: scan a barcode, understand the label.",
+    },
+    desc: {
+      es: "Escanea un producto y muestra sus sellos de advertencia NOM-051, calculados con reglas deterministas (umbrales revisados contra el DOF), más un veredicto explicado por IA a través de un proxy con caché. El modelo solo explica: los sellos nunca dependen de él. PWA y app Android (Kotlin/Compose), en desarrollo.",
+      en: "Scans a product and shows its NOM-051 warning labels, computed with deterministic rules (thresholds checked against Mexico's official gazette), plus an AI-explained verdict through a caching proxy. The model only explains; the labels never depend on it. PWA and Android app (Kotlin/Compose), in development.",
+    },
+    highlights: {
+      es: ["53 pruebas automatizadas", "Modo sin conexión", "Catálogo de ~14,000 marcas"],
+      en: ["53 automated tests", "Offline mode", "Catalog of ~14,000 brands"],
+    },
     stack: ["PWA", "JavaScript", "Kotlin", "Jetpack Compose", "NOM-051", "Open Food Facts"],
     accent: "#c8f25a",
     demo: "screenshot",
     image: "assets/img/checalo.jpg",
-    imageAlt: "Chécalo landing page hero",
+    imageAlt: { es: "Portada del sitio de Chécalo", en: "Chécalo landing page hero" },
     repo: null,
-    demoUrl: "https://checalo-web.vercel.app"
-  },
-  {
-    id: "recaps-studio",
-    name: "recaps-studio",
-    tagline: "Automated pipeline for manhwa-style recap videos.",
-    desc: "Python CLI: script, TTS with word timings, subtitles, AI images with reference sheets and a vision judge, sub-pixel motion render (FFmpeg) with a Remotion layer, automated QA and a delivery package. Resumable, hash-based cache. Code is private.",
-    stack: ["Python", "FFmpeg", "Remotion", "SQLite", "TTS"],
-    accent: "#0b84f3",
-    demo: null,
-    repo: null
-  },
-  {
-    id: "folk-park",
-    name: "folk-park",
-    tagline: "Original wavetable synth + composition assistant.",
-    desc: "A real-time synthesizer built in C++20 with JUCE, shipping as standalone and VST3 for Intel macOS. Two oscillators with wavetable modulation, effects, presets, and a deterministic composition assistant that generates musical ideas without losing control. Verified at pluginval strictness 5 and built through a disciplined milestone process.",
-    stack: ["C++20", "JUCE", "VST3", "CMake", "SQLite", "DSP"],
-    accent: "#9d8bc2",
-    demo: "synth",
-    repo: "https://github.com/HermannPR/folk-park",
-    demoUrl: null
-  },
-  {
-    id: "mildred-pierce",
-    name: "Mildred Pierce",
-    tagline: "Transmedia website for the band — debut single out now.",
-    desc: "The band's site: the debut single FRACTAL AGREEMENT with links to Spotify, Apple Music, YouTube and Instagram, plus a channel-surfing platformer, a virtual companion, leaderboards and recording uploads. Next.js, Three.js and real API routes.",
-    stack: ["Next.js", "React", "Three.js", "TypeScript", "Tailwind", "PostgreSQL"],
-    accent: "#00c8ff",
-    demo: "channels",
-    repo: "https://github.com/HermannPR/MildredPierce",
-    demoUrl: "https://mildred-pierce.vercel.app"
-  },
-  {
-    id: "lumina",
-    name: "Lumina Reservations",
-    tagline: "Office & parking reservations with real-time updates.",
-    desc: "A production-style team project for a coworking space: employee, admin, and guard views, live seat and parking availability streamed over Server-Sent Events, plus AI recommendations. TypeScript across a React/Vite frontend and a Node/Express + Supabase backend, with tests and CI.",
-    stack: ["TypeScript", "React", "Vite", "Node.js", "Express", "Supabase", "PostgreSQL", "Vitest"],
-    accent: "#4a9ec4",
-    demo: "reservations",
-    repo: "https://github.com/HermannPR/LuminaReservations",
-    demoUrl: "https://lumina-front-oxfi.vercel.app"
-  },
-  {
-    id: "hlabs",
-    name: "2HLABS",
-    tagline: "Preworkout brand site with a custom formula generator.",
-    desc: "A design-driven frontend for a real brand. A 'training souls' assessment maps you to one of twelve archetypes, then generates a tailored supplement formula ingredient by ingredient. Bilingual, PWA, deployed.",
-    stack: ["React", "Vite", "TypeScript", "Tailwind", "PWA"],
-    accent: "#6fae6c",
-    demo: "quiz",
-    repo: "https://github.com/HermannPR/2HLABS",
-    demoUrl: "https://2-hlabs.vercel.app"
-  },
-  {
-    id: "laptop-deal",
-    name: "laptop-deal-intelligence",
-    tagline: "Dashboard that scores laptop deals in Mexico.",
-    desc: "An evidence-first data product. It collects laptop offers from Mexican stores, scores them, and preserves observed prices over time so a better deal is a fact, not a vibe. Next.js + a Python data layer + Supabase.",
-    stack: ["Next.js", "TypeScript", "Python", "Supabase"],
-    accent: "#c97b4a",
-    demo: "prices",
-    repo: "https://github.com/HermannPR/laptop-deal-intelligence",
-    demoUrl: "https://laptop-deal-intelligence.vercel.app"
+    demoUrl: "https://checalo-web.vercel.app",
   },
   {
     id: "arbolito",
+    featured: true,
     name: "Juguetería El Arbolito",
-    tagline: "A real store's e-commerce + POS sync.",
-    desc: "Production e-commerce for a toy store operating since 1975. Customers buy online, the staff sells at the counter, and inventory stays consistent across both. Next.js + Supabase + Mercado Pago payments.",
+    tagline: {
+      es: "Tienda en línea en producción para una juguetería real.",
+      en: "Production e-commerce for a real toy store.",
+    },
+    desc: {
+      es: "Tienda en línea de una juguetería que opera desde 1975: los clientes compran en línea con Mercado Pago y el equipo administra productos y pedidos desde un panel propio. La sincronización con el punto de venta (Eleventa) cada 5 minutos está en implementación.",
+      en: "Online store for a toy shop operating since 1975: customers pay online with Mercado Pago and the staff manages products and orders from its own admin panel. Syncing with the in-store POS (Eleventa) every 5 minutes is being implemented.",
+    },
+    highlights: {
+      es: ["2,395 productos en catálogo", "Pagos reales con Mercado Pago", "Panel de administración"],
+      en: ["2,395 products in the catalog", "Real payments with Mercado Pago", "Admin panel"],
+    },
     stack: ["Next.js", "TypeScript", "Supabase", "Mercado Pago", "PostgreSQL"],
     accent: "#b8605f",
     demo: "store",
     repo: "https://github.com/HermannPR/JugueteriaElArbolito",
-    demoUrl: "https://jugueteria-el-arbolito.vercel.app"
+    demoUrl: "https://jugueteria-el-arbolito.vercel.app",
   },
   {
-    id: "forge",
-    name: "forge",
-    tagline: "Personal OS — 11-module life dashboard with an XP system.",
-    desc: "A personal operating system: habits, tasks, finance, and goals, tied together by an XP and leveling system so the dashboard feels alive rather than like a spreadsheet.",
-    stack: ["Next.js", "TypeScript", "Tailwind"],
-    accent: "#7b8cc9",
-    demo: null,
-    repo: "https://github.com/HermannPR/forge"
+    id: "mildred-pierce",
+    featured: true,
+    name: "Mildred Pierce",
+    tagline: {
+      es: "Sitio transmedia de la banda, con su sencillo debut.",
+      en: "Transmedia website for the band, with its debut single.",
+    },
+    desc: {
+      es: "El sitio de la banda: el sencillo FRACTAL AGREEMENT con enlaces a Spotify, Apple Music, YouTube e Instagram, y EYETV, un juego estilo televisión CRT con cuatro canales y tabla global de puntuaciones. Next.js, Three.js y rutas de API reales.",
+      en: "The band's site: the single FRACTAL AGREEMENT with links to Spotify, Apple Music, YouTube and Instagram, plus EYETV, a CRT-TV game with four channels and a global leaderboard. Next.js, Three.js and real API routes.",
+    },
+    highlights: {
+      es: ["Juego EYETV con 4 canales", "Tabla global de puntuaciones (Vercel Postgres)"],
+      en: ["EYETV game with 4 channels", "Global leaderboard (Vercel Postgres)"],
+    },
+    stack: ["Next.js", "React", "Three.js", "TypeScript", "Tailwind", "PostgreSQL"],
+    accent: "#00c8ff",
+    demo: "channels",
+    repo: "https://github.com/HermannPR/MildredPierce",
+    demoUrl: "https://mildred-pierce.vercel.app",
   },
   {
-    id: "jesusgpt",
-    name: "JesusGPT",
-    tagline: "AI Bible study chat with retrieval (RAG).",
-    desc: "A chat app that answers questions about the Bible and cites the passages it's drawing from, instead of hallucinating. Retrieval-augmented generation over a curated corpus.",
-    stack: ["Next.js", "TypeScript", "OpenAI", "RAG"],
-    accent: "#b7a6cc",
-    demo: null,
-    repo: "https://github.com/HermannPR/JesusGPT"
+    id: "folk-park",
+    featured: true,
+    name: "folk-park",
+    tagline: {
+      es: "Sintetizador wavetable propio con asistente de composición.",
+      en: "Original wavetable synth with a composition assistant.",
+    },
+    desc: {
+      es: "Sintetizador en tiempo real en C++20 con JUCE 8, como VST3 y standalone. Dos osciladores con modulación wavetable, efectos, presets e interfaz en React dentro de un WebView, más un asistente de composición determinista que propone ideas musicales sin quitarte el control. Pruébalo aquí: el demo de la derecha es una versión web.",
+      en: "A real-time synth in C++20 with JUCE 8, shipping as VST3 and standalone. Two oscillators with wavetable modulation, effects, presets and a React UI inside a WebView, plus a deterministic composition assistant that suggests musical ideas without taking control away. Try it here: the demo on the right is a web version.",
+    },
+    highlights: {
+      es: ["16/16 suites de pruebas y 19/19 contratos de UI", "Validado con pluginval strictness 5"],
+      en: ["16/16 test suites and 19/19 UI contracts", "Validated with pluginval strictness 5"],
+    },
+    stack: ["C++20", "JUCE 8", "VST3", "React", "CMake", "DSP"],
+    accent: "#9d8bc2",
+    demo: "synth",
+    noDemo: { es: "Sin binario público", en: "No public binary" },
+    repo: "https://github.com/HermannPR/folk-park",
+    demoUrl: null,
+  },
+  {
+    id: "lumina",
+    featured: true,
+    name: "Lumina Reservations",
+    tagline: {
+      es: "Reservas de oficinas y estacionamiento en tiempo real.",
+      en: "Office and parking reservations in real time.",
+    },
+    desc: {
+      es: "Proyecto en equipo para un edificio de oficinas: vistas de empleado, administrador y guardia, disponibilidad de lugares y estacionamiento en vivo y recomendaciones con IA. Yo hice el backend, las actualizaciones en tiempo real con Server-Sent Events y el mapa por piso.",
+      en: "Team project for an office building: employee, admin and guard views, live seat and parking availability, and AI recommendations. I built the backend, the real-time updates over Server-Sent Events and the per-floor map.",
+    },
+    stack: ["TypeScript", "React", "Vite", "Node.js", "Express", "Supabase", "JWT", "CSS Modules", "Vitest"],
+    accent: "#4a9ec4",
+    demo: "reservations",
+    repo: "https://github.com/HermannPR/LuminaReservations",
+    demoUrl: "https://work-hub-mty-six.vercel.app/login",
+  },
+  {
+    id: "hlabs",
+    featured: true,
+    name: "2HLABS",
+    tagline: {
+      es: "Sitio de marca de preentreno con generador de fórmulas.",
+      en: "Preworkout brand site with a formula generator.",
+    },
+    desc: {
+      es: "Frontend con diseño de autor para una marca real. Un test de \"almas de entrenamiento\" te asigna uno de 12 perfiles y un motor de recomendación híbrido arma tu fórmula ingrediente por ingrediente, revisando dosis. Bilingüe, PWA y con escenas en Three.js.",
+      en: "A design-driven frontend for a real brand. A \"training souls\" quiz maps you to one of 12 profiles and a hybrid recommendation engine builds your formula ingredient by ingredient, checking doses. Bilingual, PWA, with Three.js scenes.",
+    },
+    stack: ["React 19", "Vite", "TypeScript", "Three.js", "Tailwind", "PWA"],
+    accent: "#6fae6c",
+    demo: "quiz",
+    repo: null,
+    demoUrl: "https://2-hlabs.vercel.app",
+  },
+  {
+    id: "laptop-deal",
+    featured: true,
+    name: "LapScrapper",
+    tagline: {
+      es: "Tablero que califica ofertas de laptops en México.",
+      en: "Dashboard that scores laptop deals in Mexico.",
+    },
+    desc: {
+      es: "Producto de datos basado en evidencia: recolecta ofertas de tiendas mexicanas, las califica y guarda el historial de precios, para que una buena oferta sea un dato y no una corazonada. Te dice si conviene comprar o esperar.",
+      en: "An evidence-first data product: it collects offers from Mexican stores, scores them and keeps the price history, so a good deal is a fact, not a hunch. It tells you whether to buy now or wait.",
+    },
+    highlights: {
+      es: ["Recolector automático cada 6 h en GitHub Actions", "Promedios de 7, 30 y 90 días", "Etiqueta de comprar o esperar"],
+      en: ["Automatic collector every 6 h on GitHub Actions", "7, 30 and 90-day averages", "Buy-or-wait label"],
+    },
+    stack: ["Next.js", "TypeScript", "Python", "Supabase", "GitHub Actions"],
+    accent: "#c97b4a",
+    demo: "prices",
+    repo: "https://github.com/HermannPR/laptop-deal-intelligence",
+    demoUrl: "https://laptop-deal-intelligence.vercel.app",
+  },
+  {
+    id: "heatshield",
+    name: "HeatShield",
+    badge: { es: "Ganador · Swift Challenge Fest 2025", en: "Winner · Swift Challenge Fest 2025" },
+    tagline: {
+      es: "App iOS con alertas de calor en tiempo real, índice de calor y mapa de refugios. Ganó la categoría Sostenibilidad.",
+      en: "iOS app with real-time heat alerts, heat index and a map of cooling shelters. Won the Sustainability category.",
+    },
+    stack: ["Swift", "SwiftUI", "iOS", "OpenWeatherMap"],
+    accent: "#e07b39",
+    repo: null,
+  },
+  {
+    id: "recaps-studio",
+    name: "recaps-studio",
+    tagline: {
+      es: "Pipeline automático de videos resumen estilo manhwa, de 13 etapas: guion, voz, subtítulos, imágenes, render y QA. Ya publica videos en YouTube (uno de 1 h 42 min).",
+      en: "Automated 13-stage pipeline for manhwa-style recap videos: script, voice, subtitles, images, render and QA. Already publishing videos on YouTube (one runs 1 h 42 min).",
+    },
+    stack: ["Python", "FFmpeg", "NVENC", "Remotion", "SQLite", "TTS"],
+    accent: "#0b84f3",
+    repo: null,
+  },
+  {
+    id: "credifiel",
+    name: "CrediFiel · Datathon 2025",
+    tagline: {
+      es: "Redes neuronales sobre datos reales de cobranza domiciliada: predicen ahorro y ganancia y eligen la mejor emisora de cobro. Proyecto en equipo.",
+      en: "Neural networks on real direct-debit collection data: they predict savings and profit and pick the best collection issuer. Team project.",
+    },
+    stack: ["Python", "TensorFlow", "Flask", "Pandas"],
+    accent: "#5b8def",
+    repo: "https://github.com/HermannPR/Datathon-build",
   },
   {
     id: "warehouse",
     name: "warehouse-model",
-    tagline: "Warehouse-robot reinforcement learning simulation.",
-    desc: "A reinforcement learning environment where robots learn to move goods in a warehouse without colliding. Python simulator with a reward function and Q-learning baseline.",
-    stack: ["Python", "Reinforcement Learning", "Simulation"],
+    tagline: {
+      es: "Simulación multiagente de robots de almacén con Q-learning y subastas Contract-Net: de 18.4 a 37.9 entregas por episodio (+105 % en 20 episodios).",
+      en: "Multi-agent warehouse-robot simulation with Q-learning and Contract-Net auctions: from 18.4 to 37.9 deliveries per episode (+105% in 20 episodes).",
+    },
+    stack: ["Python", "AgentPy", "Q-learning", "FastAPI", "Unity"],
     accent: "#6fa8a0",
-    demo: null,
-    repo: "https://github.com/HermannPR/warehouse-model"
+    repo: "https://github.com/HermannPR/warehouse-model",
   },
   {
-    id: "spectre",
-    name: "spectre-daw",
-    tagline: "3DS homebrew step-sequencer synthesizer.",
-    desc: "A step-sequencer synth running on real Nintendo 3DS hardware, written in C. Hardware-timing-sensitive audio and input on a platform with very few resources.",
-    stack: ["C", "3DS", "Audio", "Homebrew"],
-    accent: "#b3846b",
-    demo: null,
-    repo: "https://github.com/HermannPR/spectre-daw"
+    id: "forge",
+    name: "forge",
+    tagline: {
+      es: "Sistema personal para TDAH: 11 módulos (hábitos, tareas, finanzas, metas) con experiencia y niveles, y un asistente con Groq.",
+      en: "Personal OS built for ADHD: 11 modules (habits, tasks, finance, goals) with XP and levels, plus a Groq-powered assistant.",
+    },
+    stack: ["Next.js 16", "TypeScript", "Supabase", "Groq", "Tailwind"],
+    accent: "#7b8cc9",
+    repo: "https://github.com/HermannPR/forge",
+    demoUrl: "https://forge-gold-iota.vercel.app",
   },
   {
-    id: "posture",
-    name: "PosturePRO",
-    tagline: "Privacy-first posture analysis, all ML in-browser.",
-    desc: "Uses pose estimation entirely in the browser so no video ever leaves the device. Grade your sitting posture in real time from a webcam or an uploaded video.",
-    stack: ["TypeScript", "Next.js", "MediaPipe", "TensorFlow"],
-    accent: "#5f9e9e",
-    demo: null,
-    repo: "https://github.com/HermannPR/PosturePRO"
+    id: "jesusgpt",
+    name: "JesusGPT",
+    tagline: {
+      es: "Chat de estudio bíblico que responde solo con los Evangelios, en 4 idiomas y con voz. Gemini con respaldo en Groq.",
+      en: "Bible-study chat that answers only from the Gospels, in 4 languages and with voice. Gemini with a Groq fallback.",
+    },
+    stack: ["React 19", "Vite", "Express", "Gemini", "Groq", "Web Speech"],
+    accent: "#b7a6cc",
+    repo: "https://github.com/HermannPR/JesusGPT",
+    demoUrl: "https://jesus-gpt.vercel.app",
   },
   {
     id: "gategenius",
     name: "GateGenius",
-    tagline: "AI airline catering platform (HackMTY 2025).",
-    desc: "Built in 24 hours for HackMTY 2025. Plan meals across a flight's cabins with AI-generated menus, cost windows, and dietary constraints. React + Vite + Tailwind.",
-    stack: ["React", "Vite", "TypeScript", "Tailwind", "AI"],
+    badge: { es: "HackMTY 2025", en: "HackMTY 2025" },
+    tagline: {
+      es: "Tablero de operaciones de catering aéreo: caducidades, predicción de consumo, personal y asignación a vuelos. Yo hice el módulo de caducidades.",
+      en: "Airline catering operations dashboard: expiration dates, consumption forecasts, staffing and flight assignment. I built the expiration module.",
+    },
+    stack: ["React 19", "Vite 7", "JavaScript"],
     accent: "#a0b5d6",
-    demo: null,
-    repo: "https://github.com/HermannPR/gategenius"
-  }
+    repo: "https://github.com/HermannPR/gategenius",
+    demoUrl: "https://gategenius.vercel.app",
+  },
+  {
+    id: "posture",
+    name: "PosturePRO",
+    tagline: {
+      es: "Analiza tu postura con la webcam y detecta 6 problemas, con todo el ML en el navegador: el video nunca sale de tu equipo.",
+      en: "Checks your posture from the webcam and detects 6 problems, with all the ML in the browser: video never leaves your device.",
+    },
+    stack: ["Next.js 14", "TypeScript", "MediaPipe", "TensorFlow.js"],
+    accent: "#5f9e9e",
+    repo: "https://github.com/HermannPR/PosturePRO",
+  },
+  {
+    id: "claudephone",
+    name: "claudephone",
+    tagline: {
+      es: "Cliente web para usar Claude Code desde el celular, con sesiones por PTY y emparejamiento por QR.",
+      en: "Web client for using Claude Code from a phone, with PTY sessions and QR pairing.",
+    },
+    stack: ["TypeScript", "Node.js", "WebSocket", "PTY"],
+    accent: "#d08a6a",
+    repo: "https://github.com/HermannPR/claudephone",
+  },
+  {
+    id: "a2",
+    name: "A2 Prüfungsakte",
+    tagline: {
+      es: "App web para practicar el examen de alemán A2: ejercicios, vocabulario y simulacros.",
+      en: "Web app to practice for the German A2 exam: exercises, vocabulary and mock tests.",
+    },
+    stack: ["TypeScript", "React", "Vercel"],
+    accent: "#8aa65b",
+    repo: "https://github.com/HermannPR/a2-pruefungsakte",
+    demoUrl: "https://a2-pruefungsakte.vercel.app",
+  },
+  {
+    id: "spectre",
+    name: "spectre-daw",
+    tagline: {
+      es: "Homebrew para Nintendo 3DS en C: 3 pistas de batería de 16 pasos y un sintetizador sustractivo de acordes. Corre en Citra y en una 3DS real.",
+      en: "Nintendo 3DS homebrew in C: 3 drum tracks with 16 steps and a subtractive chord synth. Runs on Citra and on real 3DS hardware.",
+    },
+    stack: ["C", "3DS", "Audio", "Homebrew"],
+    accent: "#b3846b",
+    repo: "https://github.com/HermannPR/spectre-daw",
+  },
 ];
 
 // Hardcoded mock data for the interactive demos.
@@ -185,16 +325,21 @@ window.MOCK = {
     booked: i % 5 === 0
   })),
   quiz: {
-    q: "Which term describes you at 7am?",
-    options: ["Already training", "Coffee first, then", "Light stretch", "Tell me why"]
+    q: { es: "¿Qué te describe a las 7 a. m.?", en: "Which term describes you at 7am?" },
+    options: [
+      { es: "Ya estoy entrenando", en: "Already training" },
+      { es: "Primero café, luego vemos", en: "Coffee first, then" },
+      { es: "Estiramiento ligero", en: "Light stretch" },
+      { es: "¿Por qué tan temprano?", en: "Tell me why" }
+    ]
   },
   products: [
-    { name: "Monster Truck", price: 349, swatch: "#c56b4a" },
-    { name: "Plush Bear", price: 229, swatch: "#b0779b" },
-    { name: "Building Blocks", price: 499, swatch: "#4a9ec4" },
-    { name: "RC Car", price: 899, swatch: "#6fae6c" },
-    { name: "Puzzle 500pc", price: 189, swatch: "#9d8bc2" },
-    { name: "Doll Set", price: 419, swatch: "#c5a03a" }
+    { name: { es: "Camión monstruo", en: "Monster Truck" }, price: 349, swatch: "#c56b4a" },
+    { name: { es: "Oso de peluche", en: "Plush Bear" }, price: 229, swatch: "#b0779b" },
+    { name: { es: "Bloques", en: "Building Blocks" }, price: 499, swatch: "#4a9ec4" },
+    { name: { es: "Carro RC", en: "RC Car" }, price: 899, swatch: "#6fae6c" },
+    { name: { es: "Rompecabezas 500 pzas", en: "Puzzle 500pc" }, price: 189, swatch: "#9d8bc2" },
+    { name: { es: "Set de muñecas", en: "Doll Set" }, price: 419, swatch: "#c5a03a" }
   ],
   // Iconic (public-domain) melody presets for the folk-park synth demo.
   // notes: [ [note, beats], ... ]. Replace with your own melodies here.

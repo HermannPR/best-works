@@ -2,7 +2,7 @@
 
 Página estática con un índice de mis mejores proyectos, con enlaces, stack y demos. Está pensada para que alguien que revise mi trabajo vea rápido de qué trata cada proyecto.
 
-Corre completa en el navegador. No usa backend ni llaves de API, y los datos de las demos están escritos directo en el código, así que sigue funcionando aunque los sitios en producción estén caídos. La página está en inglés.
+Corre completa en el navegador. No usa backend ni llaves de API, y los datos de las demos están escritos directo en el código, así que sigue funcionando aunque los sitios en producción estén caídos. La página está en español por defecto (`/`) y en inglés en `/en/`.
 
 Sitio: https://hermannpr.github.io/best-works/
 
