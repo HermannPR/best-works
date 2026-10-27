@@ -335,7 +335,7 @@
       e.preventDefault();
       ensureAudio();
       heldNote = el.getAttribute("data-n");
-      heldVoices.push(startNote(noteToFreq(heldNote), 1, true));
+      heldVoices.push(startNote(noteToFreq(heldNote), 4, true));
       lightKey(heldNote, true);
       readout.textContent = heldNote + " · " + noteToFreq(heldNote).toFixed(1) + " Hz";
     });
@@ -346,7 +346,7 @@
         releaseVoices();
         lightKey(heldNote, false);
         heldNote = el.getAttribute("data-n");
-        heldVoices.push(startNote(noteToFreq(heldNote), 1, true));
+        heldVoices.push(startNote(noteToFreq(heldNote), 4, true));
         lightKey(heldNote, true);
         readout.textContent = heldNote + " · " + noteToFreq(heldNote).toFixed(1) + " Hz";
       }
@@ -534,7 +534,7 @@
       e.preventDefault();
       ensureAudio();
       heldNote = el.getAttribute("data-n");
-      heldVoices.push(startNote(noteToFreq(heldNote), 1, true));
+      heldVoices.push(startNote(noteToFreq(heldNote), 4, true));
       lightKey(heldNote, true);
       readout.textContent = heldNote + " · " + noteToFreq(heldNote).toFixed(1) + " Hz";
     });
@@ -545,7 +545,7 @@
         releaseVoices();
         lightKey(heldNote, false);
         heldNote = el.getAttribute("data-n");
-        heldVoices.push(startNote(noteToFreq(heldNote), 1, true));
+        heldVoices.push(startNote(noteToFreq(heldNote), 4, true));
         lightKey(heldNote, true);
         readout.textContent = heldNote + " · " + noteToFreq(heldNote).toFixed(1) + " Hz";
       }
@@ -706,7 +706,7 @@
       ensureAudio();
       const n = el.getAttribute("data-n");
       heldNote = n;
-      heldVoices.push(startNote(noteToFreq(n), 1, true));
+      heldVoices.push(startNote(noteToFreq(n), 4, true));
       lightKey(n, true);
       pushNote(n);
       readout.textContent = n + " · " + noteToFreq(n).toFixed(1) + " Hz";
@@ -718,7 +718,7 @@
         releaseVoices();
         lightKey(heldNote, false);
         heldNote = el.getAttribute("data-n");
-        heldVoices.push(startNote(noteToFreq(heldNote), 1, true));
+        heldVoices.push(startNote(noteToFreq(heldNote), 4, true));
         lightKey(heldNote, true);
         pushNote(heldNote);
         readout.textContent = heldNote + " · " + noteToFreq(heldNote).toFixed(1) + " Hz";
@@ -843,7 +843,7 @@
         analyser = audio.createAnalyser();
         analyser.fftSize = 1024;
         bus = audio.createGain();
-        bus.gain.value = 0.0;
+        bus.gain.value = 0.8;
         bus.connect(analyser).connect(audio.destination);
       }
       if (audio.state === "suspended") audio.resume();
@@ -897,7 +897,7 @@
       ensureAudio();
       const n = el.getAttribute("data-n");
       heldNote = n;
-      heldVoices.push(startNote(noteToFreq(n), 1, true));
+      heldVoices.push(startNote(noteToFreq(n), 4, true));
       lightKey(n, true);
       readout.textContent = n + " · " + noteToFreq(n).toFixed(1) + " Hz";
     });
@@ -908,7 +908,7 @@
         releaseVoices();
         lightKey(heldNote, false);
         heldNote = el.getAttribute("data-n");
-        heldVoices.push(startNote(noteToFreq(heldNote), 1, true));
+        heldVoices.push(startNote(noteToFreq(heldNote), 4, true));
         lightKey(heldNote, true);
         readout.textContent = heldNote + " · " + noteToFreq(heldNote).toFixed(1) + " Hz";
       }
