@@ -15,9 +15,9 @@
 
   // ----- Real capture under a project's links: a still, or a muted loop -----
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const pre = LANG === "en" ? "../" : "";
   const shotHtml = (p) => {
     const s = p.shot;
-    const pre = LANG === "en" ? "../" : "";
     const loop = s.video && !reduceMotion;
     const media = loop
       ? `<video src="${pre}${s.video}" poster="${pre}${s.src}" width="1200" height="${s.h}" autoplay muted loop playsinline preload="metadata" aria-label="${tx(s.alt)}"></video>`
@@ -46,6 +46,7 @@
           ${p.demoUrl
             ? `<a href="${p.demoUrl}" target="_blank" rel="noopener">${T("Ver en vivo ↗", "Live demo ↗")}</a>`
             : `<span style="color:var(--dim)">${tx(p.noDemo) || T("Sin demo web", "No web demo")}</span>`}
+          ${p.promo ? `<a href="${pre}${p.promo}" target="_blank" rel="noopener">${T("Ver el promo ↗", "Watch the promo ↗")}</a>` : ""}
           ${p.repo ? `<a href="${p.repo}" target="_blank" rel="noopener">${T("Código", "Source")}</a>` : `<span style="color:var(--dim)">${T("Código privado", "Private repo")}</span>`}
         </div>
         ${p.shot ? shotHtml(p) : ""}

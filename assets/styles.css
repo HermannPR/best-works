@@ -183,9 +183,13 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px; }
 
 .actions {
   display: flex;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 8px 14px;
   align-items: center;
 }
+
+.actions a,
+.actions span { white-space: nowrap; font-size: 0.9rem; }
 
 .actions a {
   font-size: 0.9rem;
@@ -225,7 +229,9 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px; }
   padding: 5px 12px;
   font: inherit; font-size: 12px;
   color: var(--text);
-  background: rgba(8, 8, 10, 0.72);
+  background: rgba(8, 8, 10, 0.88);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
   border: 1px solid var(--line-2);
   border-radius: 999px;
   cursor: pointer;
@@ -248,6 +254,8 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px; }
   position: relative;
   box-shadow: 0 24px 60px rgba(0,0,0,0.4);
 }
+/* A still capture is as tall as its image; no empty band under it. */
+.demo[data-demo="screenshot"] { min-height: 0; }
 
 .demo-bar {
   display: flex;

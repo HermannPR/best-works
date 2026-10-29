@@ -78,6 +78,8 @@ window.PROJECTS = [
     demo: "screenshot",
     image: "assets/img/umbral.jpg",
     imageAlt: { es: "Mosaico de las doce salas de Umbral: galaxias, atractores, fluidos y fractales", en: "Mosaic of Umbral's twelve rooms: galaxies, attractors, fluids and fractals" },
+    shot: { src: "assets/img/umbral-promo.jpg", h: 675, video: "assets/img/umbral-promo-loop.mp4", alt: { es: "Fragmento del promo de Umbral VX: el Mandelbulb en el drop", en: "Umbral VX promo excerpt: the Mandelbulb at the drop" }, caption: { es: "Fragmento sin sonido · promo completo: 1 min", en: "Muted excerpt · full promo: 1 min" } },
+    promo: "assets/img/umbral-promo.mp4",
     repo: null,
     demoUrl: "https://umbral-vx.vercel.app",
   },
