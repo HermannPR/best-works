@@ -200,6 +200,44 @@ main { max-width: 1080px; margin: 0 auto; padding: 24px; }
   display: inline-block; margin-right: 8px;
 }
 
+/* Real capture under a featured project's links */
+.shot { margin: 22px 0 0; }
+.shot a { display: block; }
+.shot img,
+.shot video {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #050507;
+}
+.shot a:hover img,
+.shot a:hover video { border-color: var(--line-2); }
+.shot figcaption {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.shot-media { position: relative; }
+.shot-toggle {
+  position: absolute; right: 10px; bottom: 10px;
+  padding: 5px 12px;
+  font: inherit; font-size: 12px;
+  color: var(--text);
+  background: rgba(8, 8, 10, 0.72);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.shot-toggle:hover { border-color: var(--muted); }
+.shot-toggle:focus-visible { outline: 2px solid var(--muted); outline-offset: 2px; }
+
+/* The capture makes the text column taller, so the demo follows the scroll. */
+@media (min-width: 861px) {
+  .feature .demo { position: sticky; top: 24px; }
+}
+
 /* Demo panes */
 .demo {
   background: #050507;

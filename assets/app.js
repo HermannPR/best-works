@@ -13,6 +13,24 @@
   const stackEl = document.getElementById("stack-badges");
   stackEl.innerHTML = window.STACK.map((s) => `<span class="badge">${s}</span>`).join("");
 
+  // ----- Real capture under a project's links: a still, or a muted loop -----
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const shotHtml = (p) => {
+    const s = p.shot;
+    const pre = LANG === "en" ? "../" : "";
+    const loop = s.video && !reduceMotion;
+    const media = loop
+      ? `<video src="${pre}${s.video}" poster="${pre}${s.src}" width="1200" height="${s.h}" autoplay muted loop playsinline preload="metadata" aria-label="${tx(s.alt)}"></video>`
+      : `<img src="${pre}${s.src}" alt="${tx(s.alt)}" width="1200" height="${s.h}" loading="lazy" />`;
+    const linked = p.demoUrl
+      ? `<a href="${p.demoUrl}" target="_blank" rel="noopener" aria-label="${tx(s.alt)}. ${T("Abre el sitio en vivo en otra pestaña", "Opens the live site in a new tab")}">${media}</a>`
+      : media;
+    return `<figure class="shot">
+      ${loop ? `<div class="shot-media">${linked}<button type="button" class="shot-toggle">${T("Pausar", "Pause")}</button></div>` : linked}
+      <figcaption>${tx(s.caption) || T("Captura del sitio en vivo", "Live site screenshot")}</figcaption>
+    </figure>`;
+  };
+
   // ----- Render featured -----
   const featuredEl = document.getElementById("featured");
   featuredEl.innerHTML = featured.map((p) => `
@@ -30,6 +48,7 @@
             : `<span style="color:var(--dim)">${tx(p.noDemo) || T("Sin demo web", "No web demo")}</span>`}
           ${p.repo ? `<a href="${p.repo}" target="_blank" rel="noopener">${T("Código", "Source")}</a>` : `<span style="color:var(--dim)">${T("Código privado", "Private repo")}</span>`}
         </div>
+        ${p.shot ? shotHtml(p) : ""}
       </div>
       <div class="demo" data-demo="${p.demo || "text"}" data-accent="${p.accent}">
         <div class="demo-bar">
@@ -40,6 +59,22 @@
       </div>
     </article>
   `).join("");
+
+  // Looping captures can be paused (WCAG 2.2.2) and rest while off screen.
+  featuredEl.querySelectorAll(".shot-media").forEach((box) => {
+    const v = box.querySelector("video");
+    const btn = box.querySelector(".shot-toggle");
+    let paused = false;
+    btn.addEventListener("click", () => {
+      paused = !paused;
+      if (paused) v.pause(); else v.play().catch(() => {});
+      btn.textContent = paused ? T("Reproducir", "Play") : T("Pausar", "Pause");
+    });
+    new IntersectionObserver(([en]) => {
+      if (paused) return;
+      if (en.isIntersecting) v.play().catch(() => {}); else v.pause();
+    }).observe(v);
+  });
 
   // ----- Render smaller grid -----
   document.getElementById("grid").innerHTML = small.map((p) => `
