@@ -148,7 +148,7 @@ window.PROJECTS = [
     demo: "synth",
     noDemo: { es: "Sin binario público", en: "No public binary" },
     shot: { src: "assets/img/angelcore.jpg", h: 768, video: "assets/img/angelcore-plegaria.mp4", alt: { es: "Interfaz de Plegaria, el sintetizador de ANGELCORE: osciladores, filtro y envolventes", en: "Plegaria, the ANGELCORE synth: oscillators, filter and envelopes" }, caption: { es: "Plegaria, el sintetizador, en su interfaz real", en: "Plegaria, the synth, in its real interface" } },
-    repo: "https://github.com/HermannPR/angelcore-nucleo",
+    repo: null,
     demoUrl: null,
   },
   {
