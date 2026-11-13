@@ -66,12 +66,12 @@ window.PROJECTS = [
       en: "A heavy-compute gallery: twelve real-time GPU simulations in the browser.",
     },
     desc: {
-      es: "Doce salas, cada una una simulación en vivo en WebGPU con su propia música generativa: galaxias que chocan (N-cuerpos), atractores caóticos con millones de puntos, reacción-difusión de Gray-Scott, tinta con Navier–Stokes, un túnel de viento Lattice Boltzmann, raymarching del Mandelbulb y un trazador de caminos progresivo. Al abrir mide la GPU y elige la calidad de cada sala; un gobernador la ajusta en vivo. Si no hay WebGPU, usa WebGL2. Sin compilación ni dependencias: WGSL y Web Audio escritos a mano.",
-      en: "Twelve rooms, each a live WebGPU simulation with its own generative soundtrack: colliding galaxies (N-body), chaotic attractors with millions of points, Gray-Scott reaction–diffusion, Navier–Stokes ink, a Lattice Boltzmann wind tunnel, Mandelbulb raymarching and a progressive path tracer. On load it benchmarks the GPU and picks a quality per room; a governor adapts it live. Falls back to WebGL2 when WebGPU is missing. No build step and no dependencies: hand-written WGSL and Web Audio.",
+      es: "Doce salas, cada una una simulación en vivo en WebGPU con su propia música generativa: galaxias que chocan (N-cuerpos), atractores caóticos con millones de puntos, reacción-difusión de Gray-Scott, tinta con Navier–Stokes, un túnel de viento Lattice Boltzmann, raymarching del Mandelbulb y un trazador de caminos progresivo. Al abrir mide la GPU y elige la calidad de cada sala; un gobernador la ajusta en vivo. Si no hay WebGPU, usa WebGL2. Puedes soltar tu propia canción y la sala Señal la escucha y la sigue, todo dentro del navegador. Código abierto (MIT), sin compilación ni dependencias: WGSL y Web Audio escritos a mano.",
+      en: "Twelve rooms, each a live WebGPU simulation with its own generative soundtrack: colliding galaxies (N-body), chaotic attractors with millions of points, Gray-Scott reaction–diffusion, Navier–Stokes ink, a Lattice Boltzmann wind tunnel, Mandelbulb raymarching and a progressive path tracer. On load it benchmarks the GPU and picks a quality per room; a governor adapts it live. Falls back to WebGL2 when WebGPU is missing. Drop in your own song and the Señal room listens and follows it, all inside the browser. Open source (MIT), with no build step and no dependencies: hand-written WGSL and Web Audio.",
     },
     highlights: {
-      es: ["12 simulaciones a 60 fps en calidad máxima (Apple M5)", "Mide la GPU en ~3 s y ajusta la calidad en vivo", "Gradado de color propio: paletas cíclicas con curva fílmica"],
-      en: ["12 simulations at 60 fps on max quality (Apple M5)", "Benchmarks the GPU in ~3 s and tunes quality live", "Custom color grading: cyclic palettes with a filmic curve"],
+      es: ["12 simulaciones a 60 fps en calidad máxima (Apple M5)", "Mide la GPU en ~3 s y ajusta la calidad en vivo", "Sube tu canción: graves, medios, agudos y tempo mueven la imagen"],
+      en: ["12 simulations at 60 fps on max quality (Apple M5)", "Benchmarks the GPU in ~3 s and tunes quality live", "Bring your own song: bass, mids, highs and tempo drive the image"],
     },
     stack: ["WebGPU", "WGSL", "WebGL2", "Web Audio", "JavaScript"],
     accent: "#C8323C",
@@ -80,7 +80,7 @@ window.PROJECTS = [
     imageAlt: { es: "Mosaico de las doce salas de Umbral: galaxias, atractores, fluidos y fractales", en: "Mosaic of Umbral's twelve rooms: galaxies, attractors, fluids and fractals" },
     shot: { src: "assets/img/umbral-promo.jpg", h: 675, video: "assets/img/umbral-promo-loop.mp4", alt: { es: "Fragmento del promo de Umbral VX: el Mandelbulb en el drop", en: "Umbral VX promo excerpt: the Mandelbulb at the drop" }, caption: { es: "Fragmento sin sonido · promo completo: 1 min", en: "Muted excerpt · full promo: 1 min" } },
     promo: "assets/img/umbral-promo.mp4",
-    repo: null,
+    repo: "https://github.com/HermannPR/umbral-vx",
     demoUrl: "https://umbral-vx.vercel.app",
   },
   {
@@ -317,6 +317,17 @@ window.PROJECTS = [
     stack: ["TypeScript", "Node.js", "WebSocket", "PTY"],
     accent: "#d08a6a",
     repo: "https://github.com/HermannPR/claudephone",
+  },
+  {
+    id: "vis",
+    name: "VIS",
+    tagline: {
+      es: "Gráficas y tarjetas que un modelo de lenguaje escribe en Markdown y una persona lee en cualquier lado: HTML, SVG, PNG, texto o WhatsApp.",
+      en: "Charts and cards that a language model writes in Markdown and a person can read anywhere: HTML, SVG, PNG, text or WhatsApp.",
+    },
+    stack: ["JavaScript", "Node.js", "Markdown", "Vega-Lite", "CLI"],
+    accent: "#5a8dee",
+    repo: "https://github.com/HermannPR/vis",
   },
   {
     id: "a2",
