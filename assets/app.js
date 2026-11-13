@@ -1546,7 +1546,7 @@
     let cart = [];
     body.innerHTML = `
       <div class="readout" style="margin-top:0">${T("Carrito: 0 artículos · $0", "Cart: 0 items · $0")}</div>
-      <div class="store-products" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px"></div>`;
+      <div class="store-products" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:14px"></div>`;
     const grid = body.querySelector(".store-products");
     const out = body.querySelector(".readout");
     function total() {

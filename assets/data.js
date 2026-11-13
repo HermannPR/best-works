@@ -3,7 +3,7 @@
 
 window.STACK = [
   "TypeScript", "React", "Next.js", "Node.js", "Python", "Kotlin",
-  "C++ / JUCE", "C", "Swift", "PostgreSQL", "Supabase", "Three.js", "TensorFlow", "FFmpeg",
+  "C++ / JUCE", "C", "Swift", "PostgreSQL", "Supabase", "WebGPU", "Three.js", "TensorFlow", "FFmpeg",
 ];
 
 // Text fields are { es, en }; app.js picks the one matching <html lang>.
@@ -258,6 +258,17 @@ window.PROJECTS = [
     stack: ["Python", "AgentPy", "Q-learning", "FastAPI", "Unity"],
     accent: "#6fa8a0",
     repo: "https://github.com/HermannPR/warehouse-model",
+  },
+  {
+    id: "pinn-zonatec",
+    name: "PINN Zona Tec",
+    tagline: {
+      es: "Viento a nivel peatón en la Zona Tec de Monterrey para cualquier dirección sin correr CFD nueva. Comparé una PINN contra métodos clásicos sobre 32 simulaciones de OpenFOAM: ganó la interpolación lineal (error medio 0.187), con informe y video.",
+      en: "Pedestrian-level wind in Monterrey's Zona Tec for any direction without a new CFD run. I compared a PINN against classical methods over 32 OpenFOAM simulations: linear interpolation won (mean error 0.187), with report and video.",
+    },
+    stack: ["Python", "PyTorch", "OpenFOAM", "PINN", "CFD"],
+    accent: "#7fb3c8",
+    repo: "https://github.com/HermannPR/pinn-zonatec",
   },
   {
     id: "forge",
